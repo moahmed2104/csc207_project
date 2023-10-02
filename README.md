@@ -7,6 +7,7 @@ A productivity tool which has various organizational functions such as a calenda
 #### [Notion Documentation](https://developers.notion.com/)
 #### Postman Screenshot
 ![postmansspng](./postmanss.png)
-
+### Sample Output
+![sampleoutput.png](sampleoutput.png)
 ### Authors
 Mohamed Ahmed, Chris Solis, Nadim Mottu, Saahir Sultan
