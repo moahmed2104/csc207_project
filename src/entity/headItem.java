@@ -1,40 +1,22 @@
 package entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-A class that represents a particular event in a calendar or task description
+public class headItem implements Item{
+    private List<Item> subItem;
+    private DescriptionFactory descriptionFactory;
+    private Description description;
 
-
- */
-
-
-public class Event implements Item{
-    Description description;
-    List<Item> subItem;
-
-    Item parentItem;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-
-    public Event(Description description, LocalDateTime startTime, LocalDateTime endTime, Item parentItem) {
-        this.description = description;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.subItem = new ArrayList<Item>();
-        this.parentItem = parentItem;
-    }
-
+    //todo finish writing this class
     @Override
     public Description getDescription() {
-        return this.description;
+        return description;
     }
 
     @Override
     public List<Item> getSubItem() {
-        return this.subItem;
+        return subItem;
     }
 
     @Override
@@ -44,13 +26,13 @@ public class Event implements Item{
 
     @Override
     public void addSubItem(Item item) {
-        this.subItem.add(item);
+        subItem.add(item);
     }
 
     @Override
     public Boolean hasSubItem(String address) {
         for (Item item : subItem) {
-            if (item.getDescription().getAddress() == address){
+            if (item.getDescription().getAddress() == address) {
                 return true;
             }
         }
@@ -82,9 +64,9 @@ public class Event implements Item{
         }
     }
 
-    public void changeTime(LocalDateTime newStartTime, LocalDateTime newEndTime) {
-        this.startTime = newStartTime;
-        this.endTime = newEndTime;
+    public headItem(DescriptionFactory descriptionFactory){
+        this.subItem = new ArrayList<Item>();
+        this.descriptionFactory = descriptionFactory;
+        this.descriptionFactory.create("All", "All items in your planner", "all");
     }
-
 }
