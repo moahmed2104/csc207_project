@@ -10,16 +10,19 @@ public class Description {
     public String name;
     //todo consider making private? if so add getters and setters
     public String description;
-    public Description(String name, String description){
+    public String address;
+
+    public Description(String name, String description, String address){
         this.description = description;
         this.name = name;
+        this.address = address;
 
     }
     public void rename(String newName) {
-        //todo implement
+        this.name = newName;
     }
     public void rewriteDescription(String newDescription) {
-        //todo implement
+        this.description = newDescription;
     }
 
     //todo add an "icon" for the item

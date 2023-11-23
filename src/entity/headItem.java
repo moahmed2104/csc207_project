@@ -1,14 +1,16 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class headItem implements Item{
     private List<Item> subItem;
+    private DescriptionFactory descriptionFactory;
 
     //todo finish writing this class
     @Override
     public Description getDescription() {
-        return new Description("All", "Every Item in your planner") ;
+        return descriptionFactory.create("All", "All items in your planner", "all");
     }
 
     @Override
@@ -22,17 +24,22 @@ public class headItem implements Item{
     }
 
     @Override
-    public String getAddress() {
-        return null;
-    }
-
-    @Override
     public void addSubItem(Item item) {
-
+        subItem.add(item);
     }
 
     @Override
-    public Item navigate(String address) {
-        return null;
+    public Boolean hasChild(String descriptor) {
+        for (Item item : subItem) {
+            if (item.getDescription().address.endsWith("/" + descriptor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public headItem(DescriptionFactory descriptionFactory){
+        subItem = new ArrayList<Item>();
+        this.descriptionFactory = descriptionFactory;
     }
 }
