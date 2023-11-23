@@ -6,11 +6,12 @@ import java.util.List;
 public class headItem implements Item{
     private List<Item> subItem;
     private DescriptionFactory descriptionFactory;
+    private Description description;
 
     //todo finish writing this class
     @Override
     public Description getDescription() {
-        return descriptionFactory.create("All", "All items in your planner", "all");
+        return description;
     }
 
     @Override
@@ -29,17 +30,43 @@ public class headItem implements Item{
     }
 
     @Override
-    public Boolean hasChild(String descriptor) {
+    public Boolean hasSubItem(String address) {
         for (Item item : subItem) {
-            if (item.getDescription().address.endsWith("/" + descriptor)) {
+            if (item.getDescription().getAddress() == address) {
                 return true;
             }
         }
         return false;
     }
 
+    @Override
+    public Item findSubItem(String address) throws Exception{
+        for (Item item : subItem) {
+            if (item.getDescription().getAddress() == address) {
+                return item;
+            }
+        }
+        throw new Exception("No such sub item");
+    }
+
+    @Override
+    public Item navigate(String address) throws Exception{
+        int indexSubAddress = address.indexOf("/");
+        String subAddress = address.substring(indexSubAddress + 1);
+        int indexChildAddress = subAddress.indexOf("/");
+        String childDescriptor = subAddress.substring(indexChildAddress + 1);
+        if (address.endsWith(this.description.getAddress())) {
+            return this;
+        } else if (hasSubItem(subAddress + "/" + childDescriptor)) {
+            return findSubItem(subAddress + "/" + childDescriptor).navigate(subAddress);
+        } else {
+            throw new Exception("no such item");
+        }
+    }
+
     public headItem(DescriptionFactory descriptionFactory){
-        subItem = new ArrayList<Item>();
+        this.subItem = new ArrayList<Item>();
         this.descriptionFactory = descriptionFactory;
+        this.descriptionFactory.create("All", "All items in your planner", "all");
     }
 }

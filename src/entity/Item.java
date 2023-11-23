@@ -5,5 +5,7 @@ public interface Item {
     List<Item>  getSubItem();
     Item getParentItem();
     void addSubItem(Item item);
-    Boolean hasChild(String descriptor);
+    Boolean hasSubItem(String address);
+    Item findSubItem(String address) throws Exception;
+    Item navigate(String address) throws Exception;
 }

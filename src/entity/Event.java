@@ -43,23 +43,43 @@ public class Event implements Item{
     }
 
     @Override
-    public String getAddress() {
-        //todo finish implementing
-        return null;
-    }
-
-    @Override
     public void addSubItem(Item item) {
         this.subItem.add(item);
     }
 
     @Override
-    public Item navigate(String address) {
-        /* returns the pointer to an item that matches the address given in string address,
-        where address is of the form "root/child/child/item"
-         */
-        //todo implement
-        return null;
+    public Boolean hasSubItem(String address) {
+        for (Item item : subItem) {
+            if (item.getDescription().getAddress() == address){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Item findSubItem(String address) throws Exception{
+        for (Item item : subItem) {
+            if (item.getDescription().getAddress() == address) {
+                return item;
+            }
+        }
+        throw new Exception("No such sub item");
+    }
+
+    @Override
+    public Item navigate(String address) throws Exception{
+        int indexSubAddress = address.indexOf("/");
+        String subAddress = address.substring(indexSubAddress + 1);
+        int indexChildAddress = subAddress.indexOf("/");
+        String childDescriptor = subAddress.substring(indexChildAddress + 1);
+        if (address.endsWith(this.description.getAddress())) {
+            return this;
+        } else if (hasSubItem(subAddress + "/" + childDescriptor)) {
+            return findSubItem(subAddress + "/" + childDescriptor).navigate(subAddress);
+        } else {
+            throw new Exception("no such item");
+        }
     }
 
     public void changeTime(LocalDateTime newStartTime, LocalDateTime newEndTime) {
