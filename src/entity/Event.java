@@ -3,6 +3,7 @@ package entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
 A class that represents a particular event in a calendar or task description
@@ -39,7 +40,7 @@ public class Event implements Item{
 
     @Override
     public Item getParentItem() {
-        return null;
+        return this.parentItem;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class Event implements Item{
     @Override
     public Boolean hasSubItem(String address) {
         for (Item item : subItem) {
-            if (item.getDescription().getAddress() == address){
+            if (Objects.equals(item.getDescription().getAddress(), address)){
                 return true;
             }
         }
@@ -60,7 +61,7 @@ public class Event implements Item{
     @Override
     public Item findSubItem(String address) throws Exception{
         for (Item item : subItem) {
-            if (item.getDescription().getAddress() == address) {
+            if (Objects.equals(item.getDescription().getAddress(), address)) {
                 return item;
             }
         }
