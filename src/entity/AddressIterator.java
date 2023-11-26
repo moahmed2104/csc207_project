@@ -1,16 +1,13 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class AddressIterator implements Iterator<String> {
     List<String> addresses;
     String nextString;
     int currIndex;
     public AddressIterator(String address){
-        String[] descriptors = address.split("//"); // "//" is the regular expression for "/"
+        String[] descriptors = address.split("/");
         this.addresses = Arrays.stream(descriptors).toList();
         this.currIndex = 0;
         this.nextString = addresses.get(0);
@@ -18,17 +15,19 @@ public class AddressIterator implements Iterator<String> {
 
     @Override
     public boolean hasNext() {
-        return currIndex + 1 < addresses.size();
+        return  currIndex < addresses.size();
     }
 
     @Override
-    public String next() {
+    public String next() throws NoSuchElementException{
+        if (currIndex >= addresses.size()){
+            throw new NoSuchElementException();
+        }
         String toBeReturned = this.nextString;
         currIndex += 1;
-        if (currIndex >= addresses.size()){
-            throw IndexOutOfBoundsException;
+        if (currIndex < addresses.size()) {
+            this.nextString = nextString.concat("/" + addresses.get(currIndex));
         }
-        this.nextString = nextString.concat("/" + addresses.get(currIndex));
         return toBeReturned;
     }
 }
