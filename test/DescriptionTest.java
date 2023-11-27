@@ -8,5 +8,5 @@ import java.util.NoSuchElementException;
 import static org.junit.Assert.*;
 public class DescriptionTest {
 
-    public void createEventfromStringAddress
+
 }

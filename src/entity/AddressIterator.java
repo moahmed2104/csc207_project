@@ -1,33 +1,52 @@
 package entity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
-public class AddressIterator implements Iterator<String> {
-    List<String> addresses;
-    String nextString;
-    int currIndex;
+public class AddressIterator implements Iterable<String> {
+    public String address;
+
     public AddressIterator(String address){
-        String[] descriptors = address.split("/");
-        this.addresses = Arrays.stream(descriptors).toList();
-        this.currIndex = 0;
-        this.nextString = addresses.get(0);
+        this.address = address;
+
     }
 
+
+
+    @NotNull
     @Override
-    public boolean hasNext() {
-        return  currIndex < addresses.size();
+    public Iterator<String> iterator() {
+        return new iter(address);
     }
 
-    @Override
-    public String next() throws NoSuchElementException{
-        if (currIndex >= addresses.size()){
-            throw new NoSuchElementException();
+    private class iter implements Iterator<String>{
+        String nextString;
+        int currIndex;
+        List<String> addresses;
+        public iter(String address){
+            String[] descriptors = address.split("/");
+            this.addresses = Arrays.stream(descriptors).toList();
+            this.currIndex = 0;
+            this.nextString = addresses.get(0);
         }
-        String toBeReturned = this.nextString;
-        currIndex += 1;
-        if (currIndex < addresses.size()) {
-            this.nextString = nextString.concat("/" + addresses.get(currIndex));
+        @Override
+        public boolean hasNext() {
+            return  currIndex < addresses.size();
         }
-        return toBeReturned;
+
+        @Override
+        public String next() throws NoSuchElementException{
+            if (currIndex >= addresses.size()){
+                throw new NoSuchElementException();
+            }
+            String toBeReturned = this.nextString;
+            currIndex += 1;
+            if (currIndex < addresses.size()) {
+                this.nextString = nextString.concat("/" + addresses.get(currIndex));
+            }
+            return toBeReturned;
+        }
+
     }
 }

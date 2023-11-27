@@ -3,6 +3,7 @@ import org.junit.Test;
 import org.junit.*;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
@@ -12,7 +13,8 @@ public class AddressIteratorTest {
     @Test
     public void emptyAddress(){
         String address = "";
-        AddressIterator iter = new AddressIterator(address);
+        AddressIterator iterable = new AddressIterator(address);
+        Iterator iter = iterable.iterator();
         assertEquals(iter.next(), "");
         assertEquals(iter.hasNext(), false);
         try {
@@ -26,7 +28,8 @@ public class AddressIteratorTest {
     @Test
     public void basicAddress(){
         String address = "First/Second/Last";
-        AddressIterator iter = new AddressIterator(address);
+        AddressIterator iterable = new AddressIterator(address);
+        Iterator iter = iterable.iterator();
         String output = "";
         for (int i = 0; i < 3; i++){
             assertEquals(iter.hasNext(), true);
