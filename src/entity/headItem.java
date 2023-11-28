@@ -45,7 +45,7 @@ public class headItem implements Item{
                 return item;
             }
         }
-        throw new NoSuchElementException("No such sub item");
+        throw new NoSuchElementException();
     }
 
     @Override
