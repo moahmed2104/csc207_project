@@ -13,7 +13,7 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class CreateEventView extends JPanel implements ActionListener, PropertyChangeListener {
+public class TestCreateEventView extends JPanel implements ActionListener, PropertyChangeListener {
     public final String viewName = "Test Create Event View";
     private final CreateEventViewModel createEventViewModel;
     private final JTextField nameInputField = new JTextField(15);
@@ -26,7 +26,7 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
     private final JButton cancel;
 
 
-    public CreateEventView(CreateEventViewModel createEventViewModel, CreateEventController createEventController, String parentAddress) {
+    public TestCreateEventView(CreateEventViewModel createEventViewModel, CreateEventController createEventController, String parentAddress) {
         this.parentAddress = parentAddress;
         this.createEventViewModel = createEventViewModel;
         this.createEventController = createEventController;
@@ -84,7 +84,7 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
             @Override
             public void keyTyped(KeyEvent e) {
                 CreateEventState currentState = createEventViewModel.getState();
-                currentState.setDescription(descriptionInputField.getText() + e.getKeyChar());
+                currentState.setDescription(nameInputField.getText() + e.getKeyChar());
                 createEventViewModel.setState(currentState);
             }
 

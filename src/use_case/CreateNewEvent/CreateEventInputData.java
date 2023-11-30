@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 public class CreateEventInputData {
     final private LocalDateTime start;
     final private LocalDateTime end;
-    final private Item parent; //Figure out if this is allowed and if not how to accomplish this.
+    final private String parent; //Figure out if this is allowed and if not how to accomplish this.
 
     // Description Specific items:
     final private String name;
     final private String description;
 
 
-    public CreateEventInputData(LocalDateTime start, LocalDateTime end, Item parent, String name, String description) {
+    public CreateEventInputData(LocalDateTime start, LocalDateTime end, String parent, String name, String description) {
         this.start = start;
         this.end = end;
         this.parent = parent;
@@ -30,7 +30,7 @@ public class CreateEventInputData {
         return this.end;
     }
 
-    Item getParent(){
+    String getParent(){
         return this.parent;
     }
 
