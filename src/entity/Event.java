@@ -1,8 +1,7 @@
 package entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /*
 A class that represents a particular event in a calendar or task description
@@ -39,7 +38,7 @@ public class Event implements Item{
 
     @Override
     public Item getParentItem() {
-        return null;
+        return this.parentItem;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class Event implements Item{
     @Override
     public Boolean hasSubItem(String address) {
         for (Item item : subItem) {
-            if (item.getDescription().getAddress() == address){
+            if (Objects.equals(item.getDescription().getAddress(), address)){
                 return true;
             }
         }
@@ -58,28 +57,24 @@ public class Event implements Item{
     }
 
     @Override
-    public Item findSubItem(String address) throws Exception{
+    public Item findSubItem(String address) throws NoSuchElementException{
         for (Item item : subItem) {
             if (item.getDescription().getAddress() == address) {
                 return item;
             }
         }
-        throw new Exception("No such sub item");
+        throw new NoSuchElementException("No such sub item");
     }
 
     @Override
-    public Item navigate(String address) throws Exception{
-        int indexSubAddress = address.indexOf("/");
-        String subAddress = address.substring(indexSubAddress + 1);
-        int indexChildAddress = subAddress.indexOf("/");
-        String childDescriptor = subAddress.substring(indexChildAddress + 1);
-        if (address.endsWith(this.description.getAddress())) {
-            return this;
-        } else if (hasSubItem(subAddress + "/" + childDescriptor)) {
-            return findSubItem(subAddress + "/" + childDescriptor).navigate(subAddress);
-        } else {
-            throw new Exception("no such item");
+    public Item navigate(String address) throws NoSuchElementException{
+        Iterator<String> addressIterator = new AddressIterator(address).iterator();
+        Item curr_item = this;
+        addressIterator.next();
+        while(addressIterator.hasNext()){
+            curr_item = curr_item.findSubItem(addressIterator.next());
         }
+        return curr_item;
     }
 
     public void changeTime(LocalDateTime newStartTime, LocalDateTime newEndTime) {
