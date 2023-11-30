@@ -2,7 +2,7 @@ package entity;
 
 import java.util.*;
 
-public class headItem implements Item{
+public class HeadItem implements Item{
     private List<Item> subItem;
     private DescriptionFactory descriptionFactory;
     private Description description;
@@ -59,7 +59,7 @@ public class headItem implements Item{
         return curr_item;
     }
 
-    public headItem(DescriptionFactory descriptionFactory){
+    public HeadItem(DescriptionFactory descriptionFactory){
         this.subItem = new ArrayList<Item>();
         this.descriptionFactory = descriptionFactory;
         this.descriptionFactory.create("All", "All items in your planner", "all");
