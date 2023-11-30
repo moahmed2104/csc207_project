@@ -62,6 +62,6 @@ public class HeadItem implements Item{
     public HeadItem(DescriptionFactory descriptionFactory){
         this.subItem = new ArrayList<Item>();
         this.descriptionFactory = descriptionFactory;
-        this.descriptionFactory.create("All", "All items in your planner", "all");
+        this.description = descriptionFactory.create("All", "All items in your planner", "all");
     }
 }

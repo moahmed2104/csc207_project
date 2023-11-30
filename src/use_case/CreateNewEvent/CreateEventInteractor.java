@@ -2,6 +2,8 @@ package use_case.CreateNewEvent;
 
 import entity.*;
 
+import java.util.NoSuchElementException;
+
 public class CreateEventInteractor implements CreateEventInputBoundary{
     final CreateEventDataAccessInterface eventDataAccessObject;
     final CreateEventOutputBoundary eventPresenter;
@@ -21,21 +23,27 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
     }
 
     @Override
-    public void execute(CreateEventInputData createEventInputData) throws Exception {
+    public void execute(CreateEventInputData createEventInputData){
+        System.out.println("Success");
         Item parent = headItem.navigate(createEventInputData.getParent());
         Description event_description = descriptionFactory.create(
                 createEventInputData.getName(),
                 createEventInputData.getDescription(),
                 parent
         );
+        try {
+            Event event = eventFactory.create(
+                    event_description,
+                    createEventInputData.getStart(),
+                    createEventInputData.getEnd(),
+                    createEventInputData.getParent(),
+                    headItem
 
-        Event event = eventFactory.create(
-                event_description,
-                createEventInputData.getStart(),
-                createEventInputData.getEnd(),
-                parent.getDescription().getAddress() // Once we figure out a better way to get this address change this
-        );
-        parent.addSubItem(event);
+            );
+            parent.addSubItem(event);
+        } catch (NoSuchElementException e){
+            // todo handle this
+        }
 
         // todo now that this item has been made add it to our data access layer
     }
