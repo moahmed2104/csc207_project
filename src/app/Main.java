@@ -4,7 +4,10 @@ import data_access.DummyDataAccess;
 import interface_adapter.CreateNewEvent.CreateEventState;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.task.TaskViewModel;
 import view.CreateEventView;
+import view.TaskView;
 import view.ViewManager;
 
 import javax.swing.*;
@@ -30,7 +33,17 @@ public class Main {
         CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
         views.add(createEventView, createEventView.viewName);
 
-        viewManagerModel.setActiveView(createEventView.viewName);
+        CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
+        //CreateTaskView createTaskView = new CreateTaskView(createTaskViewModel);
+
+        //views.add(createTaskView, createTaskView.viewName);
+        TaskViewModel taskViewModel = new TaskViewModel();
+        TaskView taskView = new TaskView(taskViewModel, createTaskViewModel);
+        views.add(taskView, taskView.viewName);
+        views.setSize(600,600);
+
+
+        viewManagerModel.setActiveView(taskView.viewName);
         viewManagerModel.firePropertyChanged();
         application.pack();
         application.setVisible(true);
