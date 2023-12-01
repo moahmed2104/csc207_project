@@ -1,14 +1,18 @@
 package app;
+import data_access.DummyDataAccess;
+import entity.DescriptionFactory;
+import entity.HeadItem;
+import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
-import view.CreateTaskView;
+import view.CreateEventView;
 import view.TaskView;
 import view.ViewManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+
 public class Main {
     public static void main(String[] args) {
         // Build the main program window, the main panel containing the
@@ -42,5 +46,18 @@ public class Main {
         viewManagerModel.firePropertyChanged();
         application.pack();
         application.setVisible(true);
+
+//        CreateEventViewModel createEventViewModel = new CreateEventViewModel();
+//        DescriptionFactory descriptionFactory = new DescriptionFactory();
+//        HeadItem headItem = new HeadItem(descriptionFactory);
+//        DummyDataAccess userDataAccessObject = new DummyDataAccess(headItem);
+//
+//        CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
+//        views.add(createEventView, createEventView.viewName);
+//
+//        viewManagerModel.setActiveView(createEventView.viewName);
+//        viewManagerModel.firePropertyChanged();
+//        application.pack();
+//        application.setVisible(true);
     }
 }

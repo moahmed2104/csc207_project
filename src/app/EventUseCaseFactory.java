@@ -36,8 +36,7 @@ public class EventUseCaseFactory {
         CreateEventOutputBoundary createEventOutputBoundary = new CreateEventPresenter(viewManagerModel,createEventViewModel);
         DescriptionFactory descriptionFactory = new DescriptionFactory();
         EventFactory eventFactory = new EventFactory();
-        HeadItem headItem = new HeadItem(descriptionFactory); // Not sure if this is the best place to initialize this but we will see!
-        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(userDataAccessObject, createEventOutputBoundary, descriptionFactory, eventFactory, headItem);
+        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(userDataAccessObject, createEventOutputBoundary, descriptionFactory, eventFactory);
         return new CreateEventController(createEventInteractor);
     }
 
