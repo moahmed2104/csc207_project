@@ -6,9 +6,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class CreateEventViewModel extends ViewModel {
-    public static final String TITLE_LABEL = "Create Event View";
-    public static final String NAME_LABEL = "Enter event name:";
-    public static final String DESCRIPTION_LABEL = "Enter a description:";
+    public static final String TITLE_LABEL = "Create an Event";
+    public static final String NAME_LABEL = "Name:";
+    public static final String DESCRIPTION_LABEL = "Description:";
+
+    public static final String START_DATE_LABEL = "Starting date:";
+    public static final String START_TIME_LABEL = "Starting time";
+    public static final String END_DATE_LABEL = "Ending date:";
+    public static final String END_TIME_LABEL = "Ending time:";
     public static final String CREATE_EVENT_LABEL = "Create";
     public static final String CANCEL_BUTTON_LABEL = "Cancel";
     private CreateEventState state = new CreateEventState();
