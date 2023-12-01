@@ -1,6 +1,8 @@
 package view;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 
 import javax.swing.*;
@@ -17,17 +19,17 @@ import java.util.Map;
 
 public class TaskView extends JPanel implements ActionListener, PropertyChangeListener, ListSelectionListener {
     public final String viewName = "Task Viewer";
+
+    private ViewManagerModel viewManagerModel;
     private final TaskViewModel taskViewModel;
     private final CreateTaskViewModel createTaskViewModel;
+    private final EditTaskViewModel editTaskViewModel;
 
     private final JButton create;
     private final JButton delete;
     private final JButton edit;
     private final JButton back;
     private final JSplitPane splitPane;
-
-
-
 
     private final JList<String> taskList;
     private final DefaultListModel<String> taskListModel;
@@ -37,11 +39,12 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
     private Map<String, String[]> dummyTaskDetails;
     private Map<String, boolean[]> taskCheckboxStates;
 
-    public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel) {
+    public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel, EditTaskViewModel editTaskViewModel, ViewManagerModel viewManagerModel) {
         this.taskViewModel = taskViewModel;
         this.createTaskViewModel = createTaskViewModel;
         this.taskViewModel.addPropertyChangeListener(this);
-
+        this.editTaskViewModel = editTaskViewModel;
+        this.viewManagerModel = viewManagerModel;
         this.setPreferredSize(new Dimension(600, 600));
         this.setLayout(new BorderLayout());
 
@@ -102,7 +105,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         back.addActionListener(this);
 
         // Add the button panel to the bottom of the taskDetailsPanel
-        taskDetailsPanel.add(createButtonPanel());
+        //taskDetailsPanel.add(createButtonPanel());
 
     }
 
@@ -137,8 +140,20 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         if (evt.getSource().equals(create)) {
             //JOptionPane.showMessageDialog(null,"TEST");
             CreateTaskView test = new CreateTaskView(createTaskViewModel);
-            test.show();}
-        // Handle other button clicks here
+
+
+        }
+        if (evt.getSource().equals(edit)) {
+            //JOptionPane.showMessageDialog(null,"TEST");
+
+            EditTaskView test = new EditTaskView(editTaskViewModel);
+            }
+        if (evt.getSource().equals(back)) {
+            //JOptionPane.showMessageDialog(null,"TEST");
+
+            viewManagerModel.setActiveView("Main Menu"); // replace with actual view name
+            viewManagerModel.firePropertyChanged();
+        }
     }
 
     @Override
@@ -153,32 +168,18 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         return dummyTaskDetails.getOrDefault(taskTitle, new String[]{});
     }
 
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JButton deleteButton = new JButton("Delete");
-        JButton editButton = new JButton("Edit");
-
-        deleteButton.addActionListener(this);
-        editButton.addActionListener(this);
-
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(editButton);
-
-        return buttonPanel;
-    }
 
     private void initializeDummyTaskDetails() {
         dummyTaskDetails = new HashMap<>();
-        dummyTaskDetails.put("Tie shoes (assigned to Paul, target completion date 07/11/2019, priority 3)",
+        dummyTaskDetails.put("Tie shoes (Date 07/11/2019)",
                 new String[]{"1. Retrieve shoes", "2. Undo laces on left shoe", "3. Undo laces on right shoe",
                         "4. Put left shoe on left foot", "5. Tie left shoe laces", "6. Put right shoe on right foot",
                         "7. Tie right shoe laces"});
-        dummyTaskDetails.put("Water plants (assigned to Alice, target completion date 15/11/2019, priority 2)",
+        dummyTaskDetails.put("Water plants (Date 15/11/2019)",
                 new String[]{"1. Fill watering can", "2. Water all indoor plants", "3. Water garden plants",
                         "4. Check soil moisture levels"});
-        dummyTaskDetails.put("Prepare report (assigned to John, due 20/11/2019, priority 1)",
+        dummyTaskDetails.put("Prepare report (Date 20/11/2019)",
                 new String[]{"1. Collect latest sales data", "2. Analyze third quarter trends",
                         "3. Create report draft", "4. Review draft with team", "5. Finalize report and submit"});
     }
