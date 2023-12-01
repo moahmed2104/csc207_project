@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 import view.LabelTextPanel;
 
@@ -13,27 +14,34 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.PropertyResourceBundle;
 
-public class CreateTaskView extends JFrame implements ActionListener, PropertyChangeListener {
+public class EditTaskView extends JFrame implements ActionListener, PropertyChangeListener {
 
-    public final String viewName = "Create Task Viewer";
-    private final CreateTaskViewModel createTaskViewModel;
-    private final JTextField titleField = new JTextField(20);
+    public final String viewName = "Edit Task Viewer";
+    private final EditTaskViewModel editTaskViewModel;
+    private final JTextField nameOfTask = new JTextField(20);
 
-    private final  JTextField dateField = new JTextField(20);
-
-    private final JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    private final  JTextField dateOfTask = new JTextField(20);
 
     private final JTextPane descriptionPane = new JTextPane();
 
-    private final JLabel titleLabel = new JLabel(CreateTaskViewModel.TITLE_LABEL);
+    private final JLabel title = new JLabel(EditTaskViewModel.TITLE_LABEL);
+
+    private final JLabel date = new JLabel(EditTaskViewModel.DATE);
+
     private final JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-    private JButton createButton = new JButton(CreateTaskViewModel.TASK_BUTTON);
+    private  final JLabel task_name = new JLabel(EditTaskViewModel.TASK_NAME);
 
-    public CreateTaskView(CreateTaskViewModel createTaskViewModel) {
-        this.createTaskViewModel = createTaskViewModel;
+    private final JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        setTitle(CreateTaskViewModel.LABEL);
+    private final JLabel subTasksLabel = new JLabel(EditTaskViewModel.DESCRIPTION);
+
+    private JButton edit_button  = new JButton(EditTaskViewModel.EDIT_BUTTON);
+
+    public EditTaskView(EditTaskViewModel editTaskViewModel) {
+        this.editTaskViewModel = editTaskViewModel;
+
+        setTitle(EditTaskViewModel.TAB_TITLE);
         setSize(500, 400);
         setLayout(new GridBagLayout());
 
@@ -42,27 +50,26 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        title.setFont(new Font("Serif", Font.BOLD, 20));
         //gbc.anchor = GridBagConstraints.CENTER;
         //gbc.weightx = 1.0;
-        //gbc.weighty = 0;
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titleLabel, gbc);
+        //gbc.weighty = 0; // Give no weight
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        add(title, gbc);
         gbc.weighty = 0;
         gbc.anchor = GridBagConstraints.CENTER;
 
 
-
-        titlePanel.add(new JLabel(CreateTaskViewModel.TASK_NAME));
-        titlePanel.add(titleField);
+        titlePanel.add(task_name);
+        titlePanel.add(nameOfTask);
         add(titlePanel, gbc);
 
-        datePanel.add(new JLabel(CreateTaskViewModel.DATE));
-        datePanel.add(dateField);
+        datePanel.add(date);
+        datePanel.add(dateOfTask);
         add(datePanel, gbc);
 
 
-        JLabel subTasksLabel = new JLabel(CreateTaskViewModel.DESCRIPTION);
+
         subTasksLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(subTasksLabel, gbc);
 
@@ -75,13 +82,10 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
         gbc.weighty = 0.5;
         add(scrollPane, gbc);
 
-        // Button
-
         gbc.weighty = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.PAGE_END;
-        add(createButton, gbc);
-
+        add(edit_button, gbc);
 
         setLocationRelativeTo(null);
         setVisible(true);
