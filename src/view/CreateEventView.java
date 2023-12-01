@@ -121,13 +121,7 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
             @Override
             public void keyTyped(KeyEvent e) {
                 CreateEventState currentState = createEventViewModel.getState();
-                if ((Character.isDigit(e.getKeyChar()) && currentState.getStart_date().length() < 10) || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                    currentState.setStart_date(startDateInputField.getText() + e.getKeyChar());
-                }
-                if (currentState.getStart_date().length() == 3 || currentState.getStart_date().length() == 6) {
-                    currentState.setStart_date(startDateInputField.getText() + "/");
-                }
-
+                currentState.setStart_date(startDateInputField.getText() + e.getKeyChar());
                 createEventViewModel.setState(currentState);
             }
 
@@ -138,9 +132,6 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-
-                CreateEventState currentState = createEventViewModel.getState();
-                startDateInputField.setText(currentState.getStart_date());
 
             }
         });
