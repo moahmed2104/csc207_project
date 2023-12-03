@@ -4,9 +4,14 @@ import data_access.DummyDataAccess;
 import interface_adapter.CreateNewEvent.CreateEventState;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.tasks.create_tasks.CreateTaskController;
+import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
+import use_case.tasks.create_tasks.CreateTaskInputBoundary;
+import use_case.tasks.create_tasks.CreateTaskInputData;
+import use_case.tasks.create_tasks.CreateTaskInteractor;
 import view.*;
 
 import javax.swing.*;
@@ -41,9 +46,20 @@ public class Main {
         //views.add(createTaskView, createTaskView.viewName);
         TaskViewModel taskViewModel = new TaskViewModel();
         EditTaskViewModel editTaskViewModel = new EditTaskViewModel();
-        TaskView taskView = new TaskView(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel);
+        TaskView taskView = new TaskView(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel, "all");
+        CreateTaskPresenter taskPresenter = new CreateTaskPresenter(taskView);
+        CreateTaskInteractor taskInteractor = new CreateTaskInteractor(taskPresenter);
+        CreateTaskController createTaskController = new CreateTaskController(taskInteractor);
+        taskView.setCreateTaskController(createTaskController);
         views.add(taskView, taskView.viewName);
+        /*TaskView createtaskView = TaskUseCaseFactory.create(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel,userDataAccessObject, "all");
+        views.add(createtaskView, createtaskView.viewName);*/
+
+        //CreateTaskController createTaskController = new CreateTaskController();
+        //TaskView taskView = new TaskView(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel, createTaskController, "all");
+        //views.add(taskView, taskView.viewName);
         views.setSize(600,600);
+
 
 
         viewManagerModel.setActiveView(mainMenuView.viewName);

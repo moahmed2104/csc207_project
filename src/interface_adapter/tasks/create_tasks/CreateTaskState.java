@@ -27,7 +27,7 @@ public class CreateTaskState {
     public void setCreateTaskName(String taskName) {
         this.taskName = taskName;
     }
-    public void seCreateTaskDescription(String description) {
+    public void setCreateTaskDescription(String description) {
         this.description = description;
     }
     public void setCreateTaskDate(String date) {
