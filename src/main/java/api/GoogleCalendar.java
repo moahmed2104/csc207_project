@@ -1,5 +1,6 @@
 package api;
 
+import entity.Event;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -43,6 +44,10 @@ public class GoogleCalendar {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void insertEvent(String CalendarID, Event event){
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
     }
 
 
