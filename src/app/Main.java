@@ -1,21 +1,20 @@
 package app;
+
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
-import view.CreateTaskView;
 import view.TaskView;
 import view.ViewManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         // Build the main program window, the main panel containing the
         // various cards, and the layout, and stitch them together.
 
         // The main application window.
-        JFrame application = new JFrame("Main Menus");
+        JFrame application = new JFrame("Main Menu");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         CardLayout cardLayout = new CardLayout();

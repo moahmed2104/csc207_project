@@ -32,7 +32,6 @@ public class Description {
 
 
     private String name;
-    //todo consider making private? if so add getters and setters
     private String description;
     private String address;
 

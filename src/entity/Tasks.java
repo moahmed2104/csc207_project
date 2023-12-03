@@ -16,6 +16,32 @@ public class Tasks implements Item{
     public List<Item> getSubItem() {
         return this.subItem;
     }
+
+    @Override
+    public Item getParentItem() {
+        return null;
+    }
+
+    @Override
+    public void addSubItem(Item item) {
+
+    }
+
+    @Override
+    public Boolean hasSubItem(String address) {
+        return null;
+    }
+
+    @Override
+    public Item findSubItem(String address) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Item navigate(String address) throws Exception {
+        return null;
+    }
+
     public void changeStatus() {
 
     }
