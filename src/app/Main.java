@@ -1,17 +1,22 @@
 package app;
 
 import data_access.DummyDataAccess;
+import data_access.TaskFileLoader;
+import data_access.TaskRepositoryAdapter;
 import interface_adapter.CreateNewEvent.CreateEventState;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.delete_tasks.DeleteTaskController;
+import interface_adapter.tasks.delete_tasks.DeleteTaskPresenter;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 import use_case.tasks.create_tasks.CreateTaskInputBoundary;
 import use_case.tasks.create_tasks.CreateTaskInputData;
 import use_case.tasks.create_tasks.CreateTaskInteractor;
+import use_case.tasks.delete_tasks.DeleteTaskInteractor;
 import view.*;
 
 import javax.swing.*;
@@ -42,15 +47,20 @@ public class Main {
 
         CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
         //CreateTaskView createTaskView = new CreateTaskView(createTaskViewModel);
-
+        TaskRepositoryAdapter taskRepository = new TaskRepositoryAdapter();
         //views.add(createTaskView, createTaskView.viewName);
         TaskViewModel taskViewModel = new TaskViewModel();
         EditTaskViewModel editTaskViewModel = new EditTaskViewModel();
         TaskView taskView = new TaskView(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel, "all");
         CreateTaskPresenter taskPresenter = new CreateTaskPresenter(taskView);
-        CreateTaskInteractor taskInteractor = new CreateTaskInteractor(taskPresenter);
+        CreateTaskInteractor taskInteractor = new CreateTaskInteractor(taskPresenter, taskRepository);
         CreateTaskController createTaskController = new CreateTaskController(taskInteractor);
         taskView.setCreateTaskController(createTaskController);
+        //String csvFilePath = "src/Tasks.csv"; // Replace with your actual CSV file path
+        DeleteTaskPresenter deleteTaskPresenter = new DeleteTaskPresenter(taskView);
+        DeleteTaskInteractor deleteTaskInteractor = new DeleteTaskInteractor(deleteTaskPresenter, taskRepository);
+        DeleteTaskController deleteTaskController = new DeleteTaskController(deleteTaskInteractor);
+        taskView.setDeleteTaskController(deleteTaskController);
         views.add(taskView, taskView.viewName);
         /*TaskView createtaskView = TaskUseCaseFactory.create(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel,userDataAccessObject, "all");
         views.add(createtaskView, createtaskView.viewName);*/
