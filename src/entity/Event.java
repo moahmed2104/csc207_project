@@ -87,4 +87,12 @@ public class Event implements Item{
         this.endTime = newEndTime;
     }
 
+    public LocalDateTime getStartTime(){
+        return this.startTime;
+    }
+
+    public LocalDateTime getEndTime(){
+        return this.endTime;
+    }
+
 }

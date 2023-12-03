@@ -1,11 +1,12 @@
 package api;
 
 import entity.Event;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 
 public class GoogleCalendar {
     private static final String API_URL = "https://www.googleapis.com/calendar/v3";
@@ -48,12 +49,34 @@ public class GoogleCalendar {
 
     public void insertEvent(String CalendarID, Event event){
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-    }
-
-
-    public static void main(String[] args) {
-        getCalendars();
-        getEvents("hammoudyahmed42@gmail.com");
+        HashMap<String, LocalDateTime> start = new HashMap<String, LocalDateTime>();
+        HashMap<String, LocalDateTime> end = new HashMap<String, LocalDateTime>();
+        LocalDateTime startTime = event.getStartTime();
+        LocalDateTime endTime = event.getEndTime();
+        start.put("dateTime", startTime);
+        end.put("dateTime", endTime);
+        String description = event.getDescription().getDescription();
+        String name = event.getDescription().getName();
+        MediaType mediaType = MediaType.parse("application/json");
+        JSONObject requestbody = new JSONObject();
+        requestbody.put("start", start);
+        requestbody.put("end", end);
+        requestbody.put("description", description);
+        requestbody.put("summary", name);
+        RequestBody body = RequestBody.create(mediaType, requestbody.toString());
+        Request request = new Request.Builder()
+                .url(String.format("%s/calendars/%s/events", API_URL, CalendarID))
+                .method("POST", body)
+                .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
+                .addHeader("Accept", "application/json")
+                .build();
+        try{
+            Response response = client.newCall(request).execute();
+            System.out.println(response);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
