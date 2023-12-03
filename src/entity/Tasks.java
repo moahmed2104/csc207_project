@@ -1,16 +1,32 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Tasks implements Item{
     Description description;
     List<Item> subItem;
-    Status status;
+
+    Item parentItem;
+    //Status status;
+
+    String date;
+
+    public Tasks(Description description, String date, Item parentItem){
+        this.description = description;
+        this.subItem = new ArrayList<Item>();
+        this.parentItem = parentItem;
+        this.date = date;
+    }
 
     @Override
     public Description getDescription() {
         return this.description;
+    }
+
+    public String getDate() {
+        return this.date;
     }
 
     @Override
