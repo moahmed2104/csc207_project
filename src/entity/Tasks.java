@@ -1,16 +1,32 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Tasks implements Item{
     Description description;
-    String id;
     List<Item> subItem;
-    Status status;
+
+    Item parentItem;
+    //Status status;
+
+    String date;
+
+    public Tasks(Description description, String date, Item parentItem){
+        this.description = description;
+        this.subItem = new ArrayList<Item>();
+        this.parentItem = parentItem;
+        this.date = date;
+    }
 
     @Override
     public Description getDescription() {
         return this.description;
+    }
+
+    public String getDate() {
+        return this.date;
     }
 
     @Override
@@ -34,12 +50,12 @@ public class Tasks implements Item{
     }
 
     @Override
-    public Item findSubItem(String address) throws Exception {
+    public Item findSubItem(String address) throws NoSuchElementException {
         return null;
     }
 
     @Override
-    public Item navigate(String address) throws Exception {
+    public Item navigate(String address) throws NoSuchElementException {
         return null;
     }
 

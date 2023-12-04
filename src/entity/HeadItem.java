@@ -1,9 +1,8 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class headItem implements Item{
+public class HeadItem implements Item{
     private List<Item> subItem;
     private DescriptionFactory descriptionFactory;
     private Description description;
@@ -40,33 +39,29 @@ public class headItem implements Item{
     }
 
     @Override
-    public Item findSubItem(String address) throws Exception{
+    public Item findSubItem(String address) throws NoSuchElementException{
         for (Item item : subItem) {
             if (item.getDescription().getAddress() == address) {
                 return item;
             }
         }
-        throw new Exception("No such sub item");
+        throw new NoSuchElementException();
     }
 
     @Override
-    public Item navigate(String address) throws Exception{
-        int indexSubAddress = address.indexOf("/");
-        String subAddress = address.substring(indexSubAddress + 1);
-        int indexChildAddress = subAddress.indexOf("/");
-        String childDescriptor = subAddress.substring(indexChildAddress + 1);
-        if (address.endsWith(this.description.getAddress())) {
-            return this;
-        } else if (hasSubItem(subAddress + "/" + childDescriptor)) {
-            return findSubItem(subAddress + "/" + childDescriptor).navigate(subAddress);
-        } else {
-            throw new Exception("no such item");
+    public Item navigate(String address) throws NoSuchElementException{
+        Iterator<String> addressIterator = new AddressIterator(address).iterator();
+        Item curr_item = this;
+        addressIterator.next();
+        while(addressIterator.hasNext()){
+            curr_item = curr_item.findSubItem(addressIterator.next());
         }
+        return curr_item;
     }
 
-    public headItem(DescriptionFactory descriptionFactory){
+    public HeadItem(DescriptionFactory descriptionFactory){
         this.subItem = new ArrayList<Item>();
         this.descriptionFactory = descriptionFactory;
-        this.descriptionFactory.create("All", "All items in your planner", "all");
+        this.description = descriptionFactory.create("All", "All items in your planner", "all");
     }
 }

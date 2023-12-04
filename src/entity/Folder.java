@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Folder implements Item{
     Description description;
@@ -32,12 +33,12 @@ public class Folder implements Item{
     }
 
     @Override
-    public Item findSubItem(String address) throws Exception {
+    public Item findSubItem(String address) throws NoSuchElementException {
         return null;
     }
 
     @Override
-    public Item navigate(String address) throws Exception {
+    public Item navigate(String address) throws NoSuchElementException {
         return null;
     }
 }

@@ -8,12 +8,13 @@ import java.beans.PropertyChangeSupport;
 public class CreateTaskViewModel extends ViewModel {
 
     public static final String ADD_BUTTON_LABEL= "Add";
-    public static final String TITLE_LABEL = "Creating Task";
-    public static final String TASK_NAME = "Task Title";
-    public static final String DATE = "Due Date";
-    public static final String DESCRIPTION = "Enter a Description";
+    public static final String TITLE_LABEL = "Creating a Task";
+    public static final String TASK_NAME = "Task Title:";
+    public static final String DATE = "Date (dd/mm/yyyy):";
+    public static final String LABEL = "Task Creator";
+    public static final String DESCRIPTION = "Task Description:";
 
-    public static final String OK_BUTTON = "OK";
+    public static final String TASK_BUTTON = "Create Task";
 
     private CreateTaskState state = new CreateTaskState();
 
