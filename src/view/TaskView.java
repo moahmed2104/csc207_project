@@ -4,6 +4,7 @@ import data_access.TaskFileLoader;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.delete_tasks.DeleteTaskController;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 
@@ -44,6 +45,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
     private final String parentAddress;
 
     private CreateTaskController createTaskController;
+    private DeleteTaskController deleteTaskController;
 
 
     public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel,
@@ -125,6 +127,9 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
     public void setCreateTaskController(CreateTaskController controller) {
         createTaskController = controller;
     }
+    public void setDeleteTaskController(DeleteTaskController controller) {
+        deleteTaskController = controller;
+    }
 
     public void setTaskList(java.util.List<String> tasks) {
         taskListModel.clear();
@@ -149,8 +154,11 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         if (source == delete) {
             int selectedIndex = taskList.getSelectedIndex();
             if (selectedIndex != -1) {
-                // Remove the selected task from the model
-                taskListModel.remove(selectedIndex);
+                String selectedTask = taskList.getSelectedValue();
+                // Now we trigger the delete operation using the delete controller
+                if (deleteTaskController != null) {
+                    deleteTaskController.deleteTask(selectedTask);
+                }
             }
 
         }
@@ -238,6 +246,18 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         setTaskList(new ArrayList<>(updatedTaskDetails.keySet()));
 
     }
+    public void updateTaskListUI() {
+        // Remove the selected task from the model
+        int selectedIndex = taskList.getSelectedIndex();
+
+        if (selectedIndex != -1) {
+            taskListModel.remove(selectedIndex);
+        }
+        // Optionally, refresh the task list from the CSV if needed
+        //refreshTaskList();
+    }
+
+
 
     public void displaySuccess(String message) {
         System.out.println(message);

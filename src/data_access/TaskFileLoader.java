@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class TaskFileLoader {
 
+
     public static Map<String, String[]> loadTaskDetailsFromCSV(String filePath) {
         Map<String, String[]> taskDetails = new HashMap<>();
         String line;
@@ -38,4 +39,44 @@ public class TaskFileLoader {
             return false; // Return false if an exception occurred
         }
     }
+    public static boolean deleteTaskById(String filePath, String taskTitleToDelete) {
+        File inputFile = new File(filePath);
+        File tempFile = new File(inputFile.getAbsolutePath() + ".tmp");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                // Trim newline when comparing with lineToRemove
+                String trimmedLine = currentLine.trim();
+                if (trimmedLine.startsWith(taskTitleToDelete + ",")) {
+                    // If it's the task to delete, skip this iteration
+                    continue;
+                }
+                // Write the current line if it's not the one to delete
+                writer.write(currentLine + System.getProperty("line.separator"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Delete temp file if something goes wrong
+            tempFile.delete();
+            return false;
+        }
+
+        // Delete the original file
+        if (!inputFile.delete()) {
+            tempFile.delete();
+            return false;
+        }
+
+        // Rename the new file to the filename the original file had
+        if (!tempFile.renameTo(inputFile)) {
+            return false;
+        }
+
+        return true;
+    }
 }
+
