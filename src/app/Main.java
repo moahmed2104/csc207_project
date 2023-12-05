@@ -1,7 +1,6 @@
 package app;
 
 import data_access.DummyDataAccess;
-import interface_adapter.CreateNewEvent.CreateEventState;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
@@ -9,10 +8,11 @@ import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
-import use_case.tasks.create_tasks.CreateTaskInputBoundary;
-import use_case.tasks.create_tasks.CreateTaskInputData;
 import use_case.tasks.create_tasks.CreateTaskInteractor;
-import view.*;
+import view.CreateEventView;
+import view.MainMenuView;
+import view.TaskView;
+import view.ViewManager;
 
 import javax.swing.*;
 import java.awt.*;
