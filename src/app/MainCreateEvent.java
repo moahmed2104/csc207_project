@@ -4,26 +4,14 @@ import entity.DescriptionFactory;
 import entity.HeadItem;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
-import interface_adapter.tasks.task.TaskViewModel;
 import view.CreateEventView;
-import view.TaskView;
 import view.ViewManager;
-
-import data_access.DummyDataAccess;
-import interface_adapter.CreateNewEvent.CreateEventState;
-import interface_adapter.CreateNewEvent.CreateEventViewModel;
-import interface_adapter.ViewManagerModel;
-import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
-import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
-import interface_adapter.tasks.task.TaskViewModel;
-import view.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class MainCreateEvent {
+    public void execute() {
         // Build the main program window, the main panel containing the
         // various cards, and the layout, and stitch them together.
 

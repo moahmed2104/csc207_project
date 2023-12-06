@@ -3,6 +3,9 @@ package view;
 import interface_adapter.CreateNewEvent.CreateEventController;
 import interface_adapter.CreateNewEvent.CreateEventState;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
+import interface_adapter.EditEvent.EditEventController;
+import interface_adapter.EditEvent.EditEventState;
+import interface_adapter.EditEvent.EditEventViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,14 +17,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class CreateEventView extends JPanel implements ActionListener, PropertyChangeListener {
-    public final String viewName = "Create Event View";
-    private final CreateEventViewModel createEventViewModel;
+public class EditEventView extends JPanel implements ActionListener, PropertyChangeListener {
+    public final String viewName = "Edit Event View";
+    private final EditEventViewModel editEventViewModel;
     private final JTextField nameInputField = new JTextField(15);
 
     private final JTextField startDateInputField = new JTextField(15);
@@ -32,17 +32,19 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
     private final JLabel endDateErrorField = new JLabel();
     private final JTextField endTimeInputField = new JTextField(15);
     private final JLabel endTimeErrorField = new JLabel();
+    public String parentAddress;
 
     private final JTextField descriptionInputField = new JTextField(15);
-    private final CreateEventController createEventController;
+    private final EditEventController editEventController;
     private final JButton create;
     private final JButton cancel;
 
 
-    public CreateEventView(CreateEventViewModel createEventViewModel, CreateEventController createEventController) {
-        this.createEventViewModel = createEventViewModel;
-        this.createEventController = createEventController;
-        createEventViewModel.addPropertyChangeListener(this);
+    public EditEventView(EditEventViewModel editEventViewModel, EditEventController editEventController) {
+        this.parentAddress = parentAddress;
+        this.editEventViewModel = editEventViewModel;
+        this.editEventController = editEventController;
+        editEventViewModel.addPropertyChangeListener(this);
         JLabel title = new JLabel(CreateEventViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         LabelTextPanel nameInfo = new LabelTextPanel(
@@ -67,16 +69,16 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if(evt.getSource().equals(create)) {
-                            CreateEventState currentState = createEventViewModel.getState();
+                            EditEventState currentState = editEventViewModel.getState();
                             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
                             try {
 
                                 LocalDateTime startDateTime = LocalDateTime.parse(currentState.getStart_date() + " " + currentState.getStart_time(), dateTimeFormatter);
                                 LocalDateTime endDateTime = LocalDateTime.parse(currentState.getEnd_date() + " " + currentState.getEnd_time(), dateTimeFormatter);
-                                createEventController.execute(
+                                editEventController.execute(
                                         currentState.getName(),
                                         currentState.getDescription(),
-                                        currentState.getParentAddress(),
+                                        currentState.getAddress(),
                                         startDateTime,
                                         endDateTime
                                 );
@@ -97,9 +99,9 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
         nameInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setName(nameInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -109,9 +111,9 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setName(nameInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
 
 
             }
@@ -120,9 +122,9 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
         descriptionInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setDescription(descriptionInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -132,17 +134,17 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setDescription(descriptionInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
         });
         startDateInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setStart_date(startDateInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -152,18 +154,18 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setStart_date(startDateInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
 
             }
         });
         startTimeInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setStart_time(startTimeInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -173,17 +175,17 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setStart_time(startTimeInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
         });
         endDateInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setEnd_date(endDateInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -193,17 +195,17 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setEnd_date(endDateInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
         });
         endTimeInputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setEnd_time(endTimeInputField.getText() + e.getKeyChar());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
 
             @Override
@@ -213,9 +215,9 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
             @Override
             public void keyReleased(KeyEvent e) {
-                CreateEventState currentState = createEventViewModel.getState();
+                EditEventState currentState = editEventViewModel.getState();
                 currentState.setEnd_time(endTimeInputField.getText());
-                createEventViewModel.setState(currentState);
+                editEventViewModel.setState(currentState);
             }
         });
 
@@ -225,13 +227,13 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
         this.add(nameInfo);
         this.add(descInfo);
         this.add(startDateInfo);
-        //this.add(startDateErrorField);
+        this.add(startDateErrorField);
         this.add(startTimeInfo);
-        //this.add(startTimeErrorField);
+        this.add(startTimeErrorField);
         this.add(endDateInfo);
-        //this.add(endDateErrorField);
+        this.add(endDateErrorField);
         this.add(endTimeInfo);
-        //this.add(endTimeErrorField);
+        this.add(endTimeErrorField);
         this.add(buttons);
 
     }

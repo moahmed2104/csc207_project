@@ -2,7 +2,6 @@ package app;
 
 import entity.DescriptionFactory;
 import entity.EventFactory;
-import entity.HeadItem;
 import interface_adapter.CreateNewEvent.CreateEventController;
 import interface_adapter.CreateNewEvent.CreateEventPresenter;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
@@ -12,8 +11,6 @@ import use_case.CreateNewEvent.CreateEventInputBoundary;
 import use_case.CreateNewEvent.CreateEventInteractor;
 import use_case.CreateNewEvent.CreateEventOutputBoundary;
 import view.CreateEventView;
-import view.CreateView;
-import view.TestCreateEventView;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -25,7 +22,7 @@ public class EventUseCaseFactory {
             ViewManagerModel viewManagerModel, CreateEventViewModel createEventViewModel, CreateEventDataAccessInterface userDataAccessObject, String parentAddress) {
          try {
             CreateEventController createEventController = createEventUseCase(viewManagerModel, createEventViewModel, userDataAccessObject);
-            return new CreateEventView(createEventViewModel, createEventController, parentAddress);
+            return new CreateEventView(createEventViewModel, createEventController);
         }catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not open user data file.");
         }
@@ -36,8 +33,7 @@ public class EventUseCaseFactory {
         CreateEventOutputBoundary createEventOutputBoundary = new CreateEventPresenter(viewManagerModel,createEventViewModel);
         DescriptionFactory descriptionFactory = new DescriptionFactory();
         EventFactory eventFactory = new EventFactory();
-        HeadItem headItem = new HeadItem(descriptionFactory); // Not sure if this is the best place to initialize this but we will see!
-        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(userDataAccessObject, createEventOutputBoundary, descriptionFactory, eventFactory, headItem);
+        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(userDataAccessObject, createEventOutputBoundary, descriptionFactory, eventFactory);
         return new CreateEventController(createEventInteractor);
     }
 

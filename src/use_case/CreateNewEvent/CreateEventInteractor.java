@@ -9,22 +9,21 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
     final CreateEventOutputBoundary eventPresenter;
     final DescriptionFactory descriptionFactory;
     final EventFactory eventFactory;
-    final HeadItem headItem;
 
     public CreateEventInteractor(CreateEventDataAccessInterface eventDataAccessObject,
                                  CreateEventOutputBoundary eventPresenter,
                                  DescriptionFactory descriptionFactory,
-                                 EventFactory eventFactory, HeadItem headItem) {
+                                 EventFactory eventFactory) {
         this.eventDataAccessObject = eventDataAccessObject;
         this.eventPresenter = eventPresenter;
         this.descriptionFactory = descriptionFactory;
         this.eventFactory = eventFactory;
-        this.headItem = headItem;
     }
 
     @Override
     public void execute(CreateEventInputData createEventInputData){
-        System.out.println("Success");
+
+        HeadItem headItem = eventDataAccessObject.getHeadItem();
         Item parent = headItem.navigate(createEventInputData.getParent());
         Description event_description = descriptionFactory.create(
                 createEventInputData.getName(),
@@ -41,10 +40,10 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
 
             );
             parent.addSubItem(event);
+            eventDataAccessObject.save(event);
         } catch (NoSuchElementException e){
             // todo handle this
         }
 
-        // todo now that this item has been made add it to our data access layer
     }
 }

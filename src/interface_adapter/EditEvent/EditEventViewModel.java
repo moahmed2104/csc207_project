@@ -1,11 +1,11 @@
-package interface_adapter.CreateNewEvent;
+package interface_adapter.EditEvent;
 
 import interface_adapter.ViewModel;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class CreateEventViewModel extends ViewModel {
+public class EditEventViewModel extends ViewModel {
     public static final String TITLE_LABEL = "Create an Event";
     public static final String NAME_LABEL = "Name:";
     public static final String DESCRIPTION_LABEL = "Description:";
@@ -16,10 +16,10 @@ public class CreateEventViewModel extends ViewModel {
     public static final String END_TIME_LABEL = "Ending time:";
     public static final String CREATE_EVENT_LABEL = "Create";
     public static final String CANCEL_BUTTON_LABEL = "Cancel";
-    private CreateEventState state = new CreateEventState();
+    private EditEventState state = new EditEventState();
 
-    public CreateEventViewModel() {super("Create Event");}
-    public void setState(CreateEventState state) {this.state = state;}
+    public EditEventViewModel() {super("Create Event");}
+    public void setState(EditEventState state) {this.state = state;}
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     @Override
     public void firePropertyChanged() {
@@ -30,7 +30,7 @@ public class CreateEventViewModel extends ViewModel {
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
-    public CreateEventState getState(){
+    public EditEventState getState(){
         return this.state;
     }
 

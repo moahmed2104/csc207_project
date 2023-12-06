@@ -41,7 +41,7 @@ public class HeadItem implements Item{
     @Override
     public Item findSubItem(String address) throws NoSuchElementException{
         for (Item item : subItem) {
-            if (item.getDescription().getAddress() == address) {
+            if (Objects.equals(item.getDescription().getAddress(), address)) {
                 return item;
             }
         }
