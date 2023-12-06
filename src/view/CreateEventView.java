@@ -15,6 +15,8 @@ import java.beans.PropertyChangeListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CreateEventView extends JPanel implements ActionListener, PropertyChangeListener {
@@ -69,16 +71,23 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
                         if(evt.getSource().equals(create)) {
                             CreateEventState currentState = createEventViewModel.getState();
                             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                            LocalDateTime startDateTime = LocalDateTime.parse(currentState.getStart_date() + " " + currentState.getStart_time(), dateTimeFormatter);
-                            LocalDateTime endDateTime = LocalDateTime.parse(currentState.getEnd_date() + " " + currentState.getEnd_time(), dateTimeFormatter);
+                            try {
 
-                            createEventController.execute(
-                                    currentState.getName(),
-                                    currentState.getDescription(),
-                                    parentAddress,
-                                    startDateTime,
-                                    endDateTime
-                            );
+                                LocalDateTime startDateTime = LocalDateTime.parse(currentState.getStart_date() + " " + currentState.getStart_time(), dateTimeFormatter);
+                                LocalDateTime endDateTime = LocalDateTime.parse(currentState.getEnd_date() + " " + currentState.getEnd_time(), dateTimeFormatter);
+                                createEventController.execute(
+                                        currentState.getName(),
+                                        currentState.getDescription(),
+                                        parentAddress,
+                                        startDateTime,
+                                        endDateTime
+                                );
+                            } catch (DateTimeParseException e) {
+
+                            }
+
+
+
                         }
                     }
                 }
@@ -149,8 +158,6 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
                 currentState.setStart_date(startDateInputField.getText());
                 createEventViewModel.setState(currentState);
 
-                Pattern datePattern = Pattern.compile("^\\d{2}-\\d{2}-\\d{4}$");
-
             }
         });
         startTimeInputField.addKeyListener(new KeyListener() {
@@ -171,6 +178,19 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
                 CreateEventState currentState = createEventViewModel.getState();
                 currentState.setStart_time(startTimeInputField.getText());
                 createEventViewModel.setState(currentState);
+
+
+                Pattern datePattern = Pattern.compile("^(\\d{2}):(\\d{2})$");
+                if (!datePattern.asMatchPredicate().test(currentState.getStart_date()) ||
+                        datePattern.namedGroups().get(0) >= 24 ||
+                        datePattern.namedGroups().get(0) < 0 ||
+                        datePattern.namedGroups().get(1) >= 60 ||
+                        datePattern.namedGroups().get(1) < 0) {
+                    currentState.setStart_dateError("Please input a valid time of form \"HH:mm\"");
+                    System.out.println("wtf");
+                } else {
+                    currentState.setStart_dateError("");
+                }
             }
         });
         endDateInputField.addKeyListener(new KeyListener() {
@@ -213,6 +233,7 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
                 createEventViewModel.setState(currentState);
             }
         });
+
 
 
         this.add(title);

@@ -25,13 +25,4 @@ public class DummyDataAccess implements CreateEventDataAccessInterface {
     public HeadItem getHeadItem() {
         return this.headItem;
     }
-    @Override
-    public void saveTask(CreateTaskInputData taskData) throws IOException {
-
-    }
-
-    @Override
-    public List<String> readAllTasks() throws IOException {
-        return null;
-    }
 }
