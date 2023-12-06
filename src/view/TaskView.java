@@ -1,7 +1,10 @@
 package view;
 
+import data_access.TaskFileLoader;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.delete_tasks.DeleteTaskController;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 
@@ -13,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,13 +42,22 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
     private Map<String, String[]> dummyTaskDetails;
     private Map<String, boolean[]> taskCheckboxStates;
+    private final String parentAddress;
 
-    public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel, EditTaskViewModel editTaskViewModel, ViewManagerModel viewManagerModel) {
+    private CreateTaskController createTaskController;
+    private DeleteTaskController deleteTaskController;
+
+
+    public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel,
+                    EditTaskViewModel editTaskViewModel, ViewManagerModel viewManagerModel,
+                    String parentaddress) {
         this.taskViewModel = taskViewModel;
         this.createTaskViewModel = createTaskViewModel;
         this.taskViewModel.addPropertyChangeListener(this);
         this.editTaskViewModel = editTaskViewModel;
         this.viewManagerModel = viewManagerModel;
+
+        this.parentAddress = parentaddress;
         this.setPreferredSize(new Dimension(600, 600));
         this.setLayout(new BorderLayout());
 
@@ -85,7 +98,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         taskDetailsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         // Dummy task details initialization
-        initializeDummyTaskDetails();
+        //initializeDummyTaskDetails();
 
         // Split pane
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(taskList), taskDetailsScrollPane);
@@ -96,6 +109,8 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         this.add(splitPane, BorderLayout.CENTER);
 
         // Set the dummy tasks
+        String csvFilePath = "src/Tasks.csv";
+        this.dummyTaskDetails = TaskFileLoader.loadTaskDetailsFromCSV(csvFilePath);
         setTaskList(new ArrayList<>(dummyTaskDetails.keySet()));
 
         // Register action listeners for buttons
@@ -107,6 +122,13 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         // Add the button panel to the bottom of the taskDetailsPanel
         //taskDetailsPanel.add(createButtonPanel());
 
+    }
+
+    public void setCreateTaskController(CreateTaskController controller) {
+        createTaskController = controller;
+    }
+    public void setDeleteTaskController(DeleteTaskController controller) {
+        deleteTaskController = controller;
     }
 
     public void setTaskList(java.util.List<String> tasks) {
@@ -132,14 +154,17 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         if (source == delete) {
             int selectedIndex = taskList.getSelectedIndex();
             if (selectedIndex != -1) {
-                // Remove the selected task from the model
-                taskListModel.remove(selectedIndex);
+                String selectedTask = taskList.getSelectedValue();
+                // Now we trigger the delete operation using the delete controller
+                if (deleteTaskController != null) {
+                    deleteTaskController.deleteTask(selectedTask);
+                }
             }
 
         }
         if (evt.getSource().equals(create)) {
             //JOptionPane.showMessageDialog(null,"TEST");
-            CreateTaskView test = new CreateTaskView(createTaskViewModel);
+            CreateTaskView test = new CreateTaskView(createTaskViewModel, createTaskController, parentAddress);
 
 
         }
@@ -170,19 +195,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
 
 
-    private void initializeDummyTaskDetails() {
-        dummyTaskDetails = new HashMap<>();
-        dummyTaskDetails.put("Tie shoes (Date 07/11/2019)",
-                new String[]{"1. Retrieve shoes", "2. Undo laces on left shoe", "3. Undo laces on right shoe",
-                        "4. Put left shoe on left foot", "5. Tie left shoe laces", "6. Put right shoe on right foot",
-                        "7. Tie right shoe laces"});
-        dummyTaskDetails.put("Water plants (Date 15/11/2019)",
-                new String[]{"1. Fill watering can", "2. Water all indoor plants", "3. Water garden plants",
-                        "4. Check soil moisture levels"});
-        dummyTaskDetails.put("Prepare report (Date 20/11/2019)",
-                new String[]{"1. Collect latest sales data", "2. Analyze third quarter trends",
-                        "3. Create report draft", "4. Review draft with team", "5. Finalize report and submit"});
-    }
+
     public void setTaskDetailsText(String task) {
         // Get the current state array, or create a new one if none exists
         boolean[] checkboxStates = taskCheckboxStates.computeIfAbsent(task, k -> {
@@ -218,6 +231,40 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
                 setTaskDetailsText(selectedTask); // Update to use task name
             }
         }
+    }
+
+    public void refreshTaskList() {
+        // Read the updated task list from the CSV
+        String csvFilePath = "src/Tasks.csv"; // Ensure this is the correct path to your CSV file
+        Map<String, String[]> updatedTaskDetails = TaskFileLoader.loadTaskDetailsFromCSV(csvFilePath);
+
+        // Update the dummyTaskDetails with the new details
+        dummyTaskDetails.clear();
+        dummyTaskDetails.putAll(updatedTaskDetails);
+
+        // Update the JList with the new tasks
+        setTaskList(new ArrayList<>(updatedTaskDetails.keySet()));
+
+    }
+    public void updateTaskListUI() {
+        // Remove the selected task from the model
+        int selectedIndex = taskList.getSelectedIndex();
+
+        if (selectedIndex != -1) {
+            taskListModel.remove(selectedIndex);
+        }
+        // Optionally, refresh the task list from the CSV if needed
+        //refreshTaskList();
+    }
+
+
+
+    public void displaySuccess(String message) {
+        System.out.println(message);
+    }
+
+    public void displayError(String message) {
+        System.out.println(message);
     }
 
 

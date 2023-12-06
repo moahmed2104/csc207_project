@@ -1,9 +1,22 @@
 package entity;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class DescriptionFactory {
 
+    private String generateID(){
+        Random rand = new Random();
+        ArrayList<String> idList = new ArrayList<String>();
+        while (idList.size() < 7){
+            int id = rand.nextInt(9);
+            idList.add(Integer.toString(id));
+        }
+        return String.join(", ", idList);
+    }
+
     public Description create(String name, String description, String address){
-        return new Description(name, description, address);
+        return new Description(name, generateID(), description, address);
     }
     public Description create(String name, String description, Item parent, String descriptor){
         String desc = descriptor;

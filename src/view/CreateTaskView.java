@@ -2,6 +2,9 @@ package view;
 
 import javax.swing.*;
 
+import interface_adapter.CreateNewEvent.CreateEventState;
+import interface_adapter.tasks.create_tasks.CreateTaskController;
+import interface_adapter.tasks.create_tasks.CreateTaskState;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 import view.LabelTextPanel;
@@ -9,6 +12,8 @@ import view.LabelTextPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.PropertyResourceBundle;
@@ -16,6 +21,10 @@ import java.util.PropertyResourceBundle;
 public class CreateTaskView extends JFrame implements ActionListener, PropertyChangeListener {
 
     public final String viewName = "Create Task Viewer";
+
+    private final String parentAddress;
+
+    private final CreateTaskController createTaskController;
     private final CreateTaskViewModel createTaskViewModel;
     private final JTextField titleField = new JTextField(20);
 
@@ -30,8 +39,10 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
 
     private JButton createButton = new JButton(CreateTaskViewModel.TASK_BUTTON);
 
-    public CreateTaskView(CreateTaskViewModel createTaskViewModel) {
+    public CreateTaskView(CreateTaskViewModel createTaskViewModel, CreateTaskController createTaskController, String parentAddress) {
         this.createTaskViewModel = createTaskViewModel;
+        this.createTaskController = createTaskController;
+        this.parentAddress = parentAddress;
 
         setTitle(CreateTaskViewModel.LABEL);
         setSize(500, 400);
@@ -50,7 +61,6 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
         add(titleLabel, gbc);
         gbc.weighty = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-
 
 
         titlePanel.add(new JLabel(CreateTaskViewModel.TASK_NAME));
@@ -85,7 +95,94 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        createButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                       /* if(evt.getSource().equals(createButton)) {
+                            CreateTaskState currentState = createTaskViewModel.getState();
+                            createTaskController.execute(
+                                    currentState.getCreateTaskName(),
+                                    currentState.getCreateTaskDate(),
+                                    currentState.getCreateTaskDescription(),
+                                    parentAddress);
+
+
+
+                        }
+                    }
+                }*/
+                        if(evt.getSource().equals(createButton)) {
+                            String title = titleField.getText();
+                            String date = dateField.getText();
+                            String description = descriptionPane.getText();
+                            createTaskController.createTask(title, date, description, "src/Tasks.csv");
+                            CreateTaskView.this.dispose();
+                        }
+                    }}
+
+        );
+
+        titleField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                CreateTaskState currentState = createTaskViewModel.getState();
+                currentState.setCreateTaskName(titleField.getText() + e.getKeyChar());
+                createTaskViewModel.setState(currentState);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        descriptionPane.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                CreateTaskState currentState = createTaskViewModel.getState();
+                currentState.setCreateTaskDescription(descriptionPane.getText() + e.getKeyChar());
+                createTaskViewModel.setState(currentState);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+
+
+        });
+        dateField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                CreateTaskState currentState = createTaskViewModel.getState();
+                currentState.setCreateTaskDate(descriptionPane.getText() + e.getKeyChar());
+                createTaskViewModel.setState(currentState);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -94,6 +191,10 @@ public class CreateTaskView extends JFrame implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
+        CreateTaskState state = (CreateTaskState) evt.getNewValue();
+        setFields(state);
+    }
+    private void setFields(CreateTaskState state) {
+        titleField.setText(state.getCreateTaskName());
     }
 }

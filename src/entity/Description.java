@@ -10,6 +10,8 @@ public class Description {
         return name;
     }
 
+    public String getID(){ return this.id; }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -32,12 +34,13 @@ public class Description {
 
 
     private String name;
-    //todo consider making private? if so add getters and setters
+    private String id;
     private String description;
     private String address;
 
-    public Description(String name, String description, String address){
+    public Description(String name, String id, String description, String address){
         this.description = description;
+        this.id = id;
         this.name = name;
         this.address = address;
 

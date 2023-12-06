@@ -12,8 +12,8 @@ A class that represents a particular event in a calendar or task description
 
 public class Event implements Item{
     Description description;
+    String id;
     List<Item> subItem;
-
     Item parentItem;
     LocalDateTime startTime;
     LocalDateTime endTime;
@@ -80,6 +80,14 @@ public class Event implements Item{
     public void changeTime(LocalDateTime newStartTime, LocalDateTime newEndTime) {
         this.startTime = newStartTime;
         this.endTime = newEndTime;
+    }
+
+    public LocalDateTime getStartTime(){
+        return this.startTime;
+    }
+
+    public LocalDateTime getEndTime(){
+        return this.endTime;
     }
 
 }
