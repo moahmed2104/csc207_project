@@ -5,6 +5,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.delete_tasks.DeleteTaskController;
+import interface_adapter.tasks.edit_tasks.EditTaskController;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 
@@ -16,10 +17,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.Arrays;
 
 public class TaskView extends JPanel implements ActionListener, PropertyChangeListener, ListSelectionListener {
     public final String viewName = "Task Viewer";
@@ -46,6 +49,8 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
     private CreateTaskController createTaskController;
     private DeleteTaskController deleteTaskController;
+
+    private EditTaskController editTaskController;
 
 
     public TaskView(TaskViewModel taskViewModel, CreateTaskViewModel createTaskViewModel,
@@ -118,6 +123,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         delete.addActionListener(this);
         edit.addActionListener(this);
         back.addActionListener(this);
+        //refreshTaskDetailsPanel();
 
         // Add the button panel to the bottom of the taskDetailsPanel
         //taskDetailsPanel.add(createButtonPanel());
@@ -129,6 +135,10 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
     }
     public void setDeleteTaskController(DeleteTaskController controller) {
         deleteTaskController = controller;
+    }
+
+    public void setEditTaskController(EditTaskController controller) {
+        this.editTaskController = controller;
     }
 
     public void setTaskList(java.util.List<String> tasks) {
@@ -169,10 +179,26 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
         }
         if (evt.getSource().equals(edit)) {
-            //JOptionPane.showMessageDialog(null,"TEST");
-
-            EditTaskView test = new EditTaskView(editTaskViewModel);
+            int selectedIndex = taskList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                String selectedTaskTitle = taskList.getSelectedValue();
+                if (selectedTaskTitle != null && editTaskController != null) {
+                    // Extract title and date using regex
+                    Pattern pattern = Pattern.compile("(.*) \\(Date (\\d{2}/\\d{2}/\\d{4})\\)");
+                    Matcher matcher = pattern.matcher(selectedTaskTitle);
+                    if (matcher.find()) {
+                        String title = matcher.group(1);
+                        String date = matcher.group(2);
+                        String[] details = dummyTaskDetails.get(selectedTaskTitle);
+                        // Combine the subtasks into a single description string
+                        String description = String.join(", ", Arrays.copyOfRange(details, 0, details.length));
+                        // Open the EditTaskView with the selected task's details
+                        EditTaskView editView = new EditTaskView(title, date, description, editTaskController);
+                        editView.setVisible(true);
+                    }
+                }
             }
+        }
         if (evt.getSource().equals(back)) {
             //JOptionPane.showMessageDialog(null,"TEST");
 
@@ -196,6 +222,23 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
 
 
+    /*public void refreshTaskDetailsPanel(String taskTitle) {
+        // Get the updated task details
+        String[] subtasks = dummyTaskDetails.get(taskTitle);
+
+        // Clear the existing subtasks
+        taskDetailsPanel.removeAll();
+
+        // Add new checkboxes for each subtask
+        for (String subtask : subtasks) {
+            taskDetailsPanel.add(new JCheckBox(subtask));
+        }
+
+        // Update the UI
+        taskDetailsPanel.revalidate();
+        taskDetailsPanel.repaint();
+    }*/
+
     public void setTaskDetailsText(String task) {
         // Get the current state array, or create a new one if none exists
         boolean[] checkboxStates = taskCheckboxStates.computeIfAbsent(task, k -> {
@@ -210,7 +253,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         String[] subtasks = dummyTaskDetails.get(task);
         for (int i = 0; i < subtasks.length; i++) {
             JCheckBox checkBox = new JCheckBox(subtasks[i], checkboxStates[i]);
-            int index = i; // Need a effectively final variable for the lambda
+            int index = i;
             checkBox.addActionListener(e -> {
                 checkboxStates[index] = checkBox.isSelected(); // Update the state when the checkbox is toggled
             });
@@ -221,43 +264,36 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         taskDetailsPanel.repaint();
     }
 
-    // ... valueChanged method ...
+
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             String selectedTask = taskList.getSelectedValue();
             if (selectedTask != null) {
-                setTaskDetailsText(selectedTask); // Update to use task name
+                setTaskDetailsText(dummyTaskDetails.get(selectedTask)); // Update to use task name
             }
         }
     }
 
     public void refreshTaskList() {
-        // Read the updated task list from the CSV
         String csvFilePath = "src/Tasks.csv"; // Ensure this is the correct path to your CSV file
         Map<String, String[]> updatedTaskDetails = TaskFileLoader.loadTaskDetailsFromCSV(csvFilePath);
-
-        // Update the dummyTaskDetails with the new details
         dummyTaskDetails.clear();
         dummyTaskDetails.putAll(updatedTaskDetails);
-
-        // Update the JList with the new tasks
         setTaskList(new ArrayList<>(updatedTaskDetails.keySet()));
-
     }
-    public void updateTaskListUI() {
-        // Remove the selected task from the model
-        int selectedIndex = taskList.getSelectedIndex();
-
-        if (selectedIndex != -1) {
-            taskListModel.remove(selectedIndex);
-        }
-        // Optionally, refresh the task list from the CSV if needed
-        //refreshTaskList();
+    public void refreshTaskDetailsPanel(String taskTitle) {
+        String[] subtasks = dummyTaskDetails.get(taskTitle);
+        setTaskDetailsText(subtasks);
     }
 
 
+
+
+    public JList<String> getTaskList() {
+        return this.taskList;
+    }
 
     public void displaySuccess(String message) {
         System.out.println(message);
@@ -265,6 +301,18 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void displayError(String message) {
         System.out.println(message);
+    }
+    public void updateTaskListUI() {
+        // Read the updated task list from the CSV
+        refreshTaskList();
+
+        // Now update the UI based on the new data
+        // For example, if you're updating or adding a task, you might need to
+        // refresh the entire list or add a new element to the list model
+        taskListModel.clear();
+        for (String task : dummyTaskDetails.keySet()) {
+            taskListModel.addElement(task);
+        }
     }
 
 

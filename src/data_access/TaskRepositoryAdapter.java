@@ -19,5 +19,9 @@ import java.util.Map;
         public boolean deleteTaskById(String filePath, String taskTitleToDelete) {
             return TaskFileLoader.deleteTaskById(filePath, taskTitleToDelete);
         }
+        @Override
+        public boolean editTaskInCSV(String filePath, String originalTitle, String newTitle, String newDate, String newDescription) {
+            return TaskFileLoader.editTaskInCSV(filePath, originalTitle, newTitle, newDate, newDescription);
+        }
     }
 

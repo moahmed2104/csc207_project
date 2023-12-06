@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.edit_tasks.EditTaskController;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 import view.LabelTextPanel;
@@ -17,16 +18,16 @@ import java.util.PropertyResourceBundle;
 public class EditTaskView extends JFrame implements ActionListener, PropertyChangeListener {
 
     public final String viewName = "Edit Task Viewer";
-    private final EditTaskViewModel editTaskViewModel;
+    //private final EditTaskViewModel editTaskViewModel;
     private final JTextField nameOfTask = new JTextField(20);
 
     private final  JTextField dateOfTask = new JTextField(20);
 
     private final JTextPane descriptionPane = new JTextPane();
 
-    private final JLabel title = new JLabel(EditTaskViewModel.TITLE_LABEL);
+    private final JLabel title1 = new JLabel(EditTaskViewModel.TITLE_LABEL);
 
-    private final JLabel date = new JLabel(EditTaskViewModel.DATE);
+    private final JLabel date1 = new JLabel(EditTaskViewModel.DATE);
 
     private final JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -38,8 +39,17 @@ public class EditTaskView extends JFrame implements ActionListener, PropertyChan
 
     private JButton edit_button  = new JButton(EditTaskViewModel.EDIT_BUTTON);
 
-    public EditTaskView(EditTaskViewModel editTaskViewModel) {
-        this.editTaskViewModel = editTaskViewModel;
+
+    private JTextField dateField;
+    private JTextArea descriptionArea;
+    private JButton submitButton;
+    private final EditTaskController controller;
+    private final String originalTitle;
+
+    public EditTaskView(String originalTitle, String date, String description, EditTaskController controller ){
+        //this.editTaskViewModel = editTaskViewModel;
+        this.controller = controller;
+        this.originalTitle = originalTitle;
 
         setTitle(EditTaskViewModel.TAB_TITLE);
         setSize(500, 400);
@@ -50,12 +60,12 @@ public class EditTaskView extends JFrame implements ActionListener, PropertyChan
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        title.setFont(new Font("Serif", Font.BOLD, 20));
+        title1.setFont(new Font("Serif", Font.BOLD, 20));
         //gbc.anchor = GridBagConstraints.CENTER;
         //gbc.weightx = 1.0;
         //gbc.weighty = 0; // Give no weight
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        add(title, gbc);
+        title1.setHorizontalAlignment(SwingConstants.CENTER);
+        add(title1, gbc);
         gbc.weighty = 0;
         gbc.anchor = GridBagConstraints.CENTER;
 
@@ -64,7 +74,7 @@ public class EditTaskView extends JFrame implements ActionListener, PropertyChan
         titlePanel.add(nameOfTask);
         add(titlePanel, gbc);
 
-        datePanel.add(date);
+        datePanel.add(date1);
         datePanel.add(dateOfTask);
         add(datePanel, gbc);
 
@@ -89,6 +99,17 @@ public class EditTaskView extends JFrame implements ActionListener, PropertyChan
 
         setLocationRelativeTo(null);
         setVisible(true);
+        nameOfTask.setText(originalTitle);
+        dateOfTask.setText(date);
+        descriptionPane.setText(description);
+        edit_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.editTask(originalTitle, nameOfTask.getText(), dateOfTask.getText(), descriptionPane.getText());
+
+                EditTaskView.this.dispose();
+            }
+        });
     }
 
     @Override
