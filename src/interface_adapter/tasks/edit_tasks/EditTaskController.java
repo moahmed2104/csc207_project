@@ -14,5 +14,6 @@ public class EditTaskController {
     public void editTask(String originalTaskId, String newTitle, String newDate, String newDescription) {
         EditTaskInputData requestModel = new EditTaskInputData(originalTaskId, newTitle, newDate, newDescription);
         interactor.editTask(requestModel);
+
     }
 }

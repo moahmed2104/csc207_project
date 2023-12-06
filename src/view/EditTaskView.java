@@ -106,6 +106,7 @@ public class EditTaskView extends JFrame implements ActionListener, PropertyChan
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.editTask(originalTitle, nameOfTask.getText(), dateOfTask.getText(), descriptionPane.getText());
+
                 EditTaskView.this.dispose();
             }
         });

@@ -16,7 +16,8 @@ public class EditTaskPresenter {
         if (responseModel.isSuccess()) {
             taskView.displaySuccess(responseModel.getMessage());
             taskView.refreshTaskList();
-            //taskView.refreshTaskDetailsPanel(taskView.getTaskList().getSelectedValue());
+            taskView.updateTaskListUI();
+            //taskView.setTaskDetailsText(taskView.getTaskList().getSelectedValue());
         } else {
             taskView.displayError(responseModel.getMessage());
         }
