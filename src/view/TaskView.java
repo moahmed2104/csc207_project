@@ -222,7 +222,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
 
 
-    public void refreshTaskDetailsPanel(String taskTitle) {
+    /*public void refreshTaskDetailsPanel(String taskTitle) {
         // Get the updated task details
         String[] subtasks = dummyTaskDetails.get(taskTitle);
 
@@ -237,7 +237,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         // Update the UI
         taskDetailsPanel.revalidate();
         taskDetailsPanel.repaint();
-    }
+    }*/
 
     public void setTaskDetailsText(String task) {
         // Get the current state array, or create a new one if none exists
@@ -264,41 +264,32 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         taskDetailsPanel.repaint();
     }
 
-    // ... valueChanged method ...
+
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             String selectedTask = taskList.getSelectedValue();
             if (selectedTask != null) {
-                setTaskDetailsText(selectedTask); // Update to use task name
+                setTaskDetailsText(dummyTaskDetails.get(selectedTask)); // Update to use task name
             }
         }
     }
 
     public void refreshTaskList() {
-        // Read the updated task list from the CSV
         String csvFilePath = "src/Tasks.csv"; // Ensure this is the correct path to your CSV file
         Map<String, String[]> updatedTaskDetails = TaskFileLoader.loadTaskDetailsFromCSV(csvFilePath);
-
-        // Update the dummyTaskDetails with the new details
         dummyTaskDetails.clear();
         dummyTaskDetails.putAll(updatedTaskDetails);
-
-        // Update the JList with the new tasks
         setTaskList(new ArrayList<>(updatedTaskDetails.keySet()));
-
     }
-    public void updateTaskListUI() {
-        // Remove the selected task from the model
-        int selectedIndex = taskList.getSelectedIndex();
-
-        if (selectedIndex != -1) {
-            taskListModel.remove(selectedIndex);
-        }
-        // Optionally, refresh the task list from the CSV if needed
-        //refreshTaskList();
+    public void refreshTaskDetailsPanel(String taskTitle) {
+        String[] subtasks = dummyTaskDetails.get(taskTitle);
+        setTaskDetailsText(subtasks);
     }
+
+
+
 
     public JList<String> getTaskList() {
         return this.taskList;
@@ -310,6 +301,18 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void displayError(String message) {
         System.out.println(message);
+    }
+    public void updateTaskListUI() {
+        // Read the updated task list from the CSV
+        refreshTaskList();
+
+        // Now update the UI based on the new data
+        // For example, if you're updating or adding a task, you might need to
+        // refresh the entire list or add a new element to the list model
+        taskListModel.clear();
+        for (String task : dummyTaskDetails.keySet()) {
+            taskListModel.addElement(task);
+        }
     }
 
 
