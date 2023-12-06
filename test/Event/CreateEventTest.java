@@ -4,11 +4,17 @@ import app.EventUseCaseFactory;
 import app.MainCreateEvent;
 import data_access.DummyDataAccess;
 import entity.*;
+import entity.Event;
 import interface_adapter.CreateNewEvent.*;
+import interface_adapter.DeleteEvent.DeleteEventController;
+import interface_adapter.DeleteEvent.DeleteEventPresenter;
 import interface_adapter.ViewManagerModel;
 import use_case.CreateNewEvent.CreateEventInputBoundary;
 import use_case.CreateNewEvent.CreateEventInteractor;
 import use_case.CreateNewEvent.CreateEventOutputBoundary;
+import use_case.DeleteEvent.DeleteEventInputBoundary;
+import use_case.DeleteEvent.DeleteEventInteractor;
+import use_case.DeleteEvent.DeleteEventOutputBoundary;
 import view.CreateEventView;
 
 import javax.swing.*;
@@ -37,8 +43,7 @@ import java.awt.*;
 import java.time.LocalDateTime;
 
 import static java.lang.System.out;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class CreateEventTest {
     public JButton getButton(){
@@ -105,7 +110,7 @@ public class CreateEventTest {
 
     }
     @org.junit.Test
-    public void testCreateTask() {
+    public void testCreateEvent() {
         DescriptionFactory descriptionFactory = new DescriptionFactory();
         HeadItem headItem = new HeadItem(descriptionFactory);
         DummyDataAccess userDataAccessObject = new DummyDataAccess(headItem);
@@ -116,5 +121,10 @@ public class CreateEventTest {
         CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(userDataAccessObject, createEventOutputBoundary, descriptionFactory, eventFactory);
         new CreateEventController(createEventInteractor).execute("test", "testdescription", "all", LocalDateTime.now(), LocalDateTime.now());
         assertEquals("successfully created Item: " + "name:" + "test" + ", description:" + "testdescription" + ", address:" + "all/test", userDataAccessObject.lastSaid);
+        DeleteEventOutputBoundary deleteEventOutputBoundary = new DeleteEventPresenter();
+        DeleteEventInputBoundary deleteEventInteractor = new DeleteEventInteractor(userDataAccessObject, deleteEventOutputBoundary);
+        new DeleteEventController(deleteEventInteractor).execute("all/test");
+        assertEquals("successfully deleted Item: " + "name:" + "test" + ", description:" + "testdescription" + ", address:" + "all/test", userDataAccessObject.lastSaid);
+        assertFalse(headItem.hasSubItem("all/test"));
     }
 }
