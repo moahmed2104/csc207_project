@@ -22,7 +22,7 @@ public class EventUseCaseFactory {
             ViewManagerModel viewManagerModel, CreateEventViewModel createEventViewModel, CreateEventDataAccessInterface userDataAccessObject, String parentAddress) {
          try {
             CreateEventController createEventController = createEventUseCase(viewManagerModel, createEventViewModel, userDataAccessObject);
-            return new CreateEventView(createEventViewModel, createEventController, parentAddress);
+            return new CreateEventView(createEventViewModel, createEventController);
         }catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not open user data file.");
         }
