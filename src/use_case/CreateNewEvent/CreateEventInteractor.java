@@ -22,7 +22,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
 
     @Override
     public void execute(CreateEventInputData createEventInputData){
-        System.out.println("Success");
+
         HeadItem headItem = eventDataAccessObject.getHeadItem();
         Item parent = headItem.navigate(createEventInputData.getParent());
         Description event_description = descriptionFactory.create(

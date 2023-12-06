@@ -2,7 +2,6 @@ package app;
 
 import entity.DescriptionFactory;
 import entity.EventFactory;
-import entity.HeadItem;
 import interface_adapter.CreateNewEvent.CreateEventController;
 import interface_adapter.CreateNewEvent.CreateEventPresenter;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
@@ -12,8 +11,6 @@ import use_case.CreateNewEvent.CreateEventInputBoundary;
 import use_case.CreateNewEvent.CreateEventInteractor;
 import use_case.CreateNewEvent.CreateEventOutputBoundary;
 import view.CreateEventView;
-import view.CreateView;
-import view.TestCreateEventView;
 
 import javax.swing.*;
 import java.io.IOException;

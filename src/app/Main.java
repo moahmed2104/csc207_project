@@ -10,6 +10,15 @@ import view.CreateEventView;
 import view.TaskView;
 import view.ViewManager;
 
+import data_access.DummyDataAccess;
+import interface_adapter.CreateNewEvent.CreateEventState;
+import interface_adapter.CreateNewEvent.CreateEventViewModel;
+import interface_adapter.ViewManagerModel;
+import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
+import interface_adapter.tasks.task.TaskViewModel;
+import view.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,36 +37,45 @@ public class Main {
         JPanel views = new JPanel(cardLayout);
         application.add(views);
 
-
         // This keeps track of and manages which view is currently showing.
         ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
 
-        CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
-        //CreateTaskView createTaskView = new CreateTaskView(createTaskViewModel);
 
-        //views.add(createTaskView, createTaskView.viewName);
-        TaskViewModel taskViewModel = new TaskViewModel();
-        TaskView taskView = new TaskView(taskViewModel, createTaskViewModel);
-        views.add(taskView, taskView.viewName);
-        views.setSize(600,600);
+        CreateEventViewModel createEventViewModel = new CreateEventViewModel();
+        DescriptionFactory descriptionFactory = new DescriptionFactory();
+        HeadItem headItem = new HeadItem(descriptionFactory);
+        DummyDataAccess userDataAccessObject = new DummyDataAccess(headItem);
 
-        viewManagerModel.setActiveView(taskView.viewName);
-        viewManagerModel.firePropertyChanged();
-        application.pack();
-        application.setVisible(true);
 
-//        CreateEventViewModel createEventViewModel = new CreateEventViewModel();
-//        DescriptionFactory descriptionFactory = new DescriptionFactory();
-//        HeadItem headItem = new HeadItem(descriptionFactory);
-//        DummyDataAccess userDataAccessObject = new DummyDataAccess(headItem);
+//        CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
+//        TaskViewModel taskViewModel = new TaskViewModel();
+//        EditTaskViewModel editTaskViewModel = new EditTaskViewModel();
+//        TaskView taskView = new TaskView(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel);
+//        views.add(taskView, taskView.viewName);
+//        views.setSize(600,600);
 //
 //        CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
 //        views.add(createEventView, createEventView.viewName);
 //
-//        viewManagerModel.setActiveView(createEventView.viewName);
+//        MainMenuView mainMenuView = new MainMenuView(viewManagerModel);
+//        views.add(mainMenuView, mainMenuView.viewName);
+//
+//        //CreateTaskView createTaskView = new CreateTaskView(createTaskViewModel);
+//
+//        viewManagerModel.setActiveView(mainMenuView.viewName);
 //        viewManagerModel.firePropertyChanged();
 //        application.pack();
 //        application.setVisible(true);
+
+
+        CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
+        views.add(createEventView, createEventView.viewName);
+
+        viewManagerModel.setActiveView(createEventView.viewName);
+        viewManagerModel.firePropertyChanged();
+        application.pack();
+        application.setVisible(true);
     }
 }
+

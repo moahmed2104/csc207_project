@@ -43,7 +43,7 @@ public class Description {
 
     }
     public String toString(){
-        return "name:" + this.name + " description:" + this.description + " address:" + this.address;
+        return "name:" + this.name + ", description:" + this.description + ", address:" + this.address;
     }
 
     //todo add an "icon" for the item

@@ -13,7 +13,7 @@ public class DummyDataAccess implements CreateEventDataAccessInterface {
 
     @Override
     public void save(Item item) {
-        System.out.println("successfully created Item with description" + item.getDescription().toString());
+        System.out.println("successfully created Item: " + item.getDescription().toString());
     }
 
     @Override
