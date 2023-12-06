@@ -45,6 +45,9 @@ public class Description {
         this.address = address;
 
     }
+    public String toString(){
+        return "name:" + this.name + ", description:" + this.description + ", address:" + this.address;
+    }
 
     //todo add an "icon" for the item
 }

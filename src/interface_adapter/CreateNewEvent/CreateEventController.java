@@ -12,8 +12,8 @@ public class CreateEventController {
         this.createEventInteractor = createEventInteractor;
     }
 
-    public void execute(String name, String description, String parentAddress) {
-        CreateEventInputData createEventInputData = new CreateEventInputData(LocalDateTime.now(),LocalDateTime.now(),parentAddress, name, description);
+    public void execute(String name, String description, String parentAddress, LocalDateTime start, LocalDateTime end) {
+        CreateEventInputData createEventInputData = new CreateEventInputData(start,end,parentAddress, name, description);
         createEventInteractor.execute(createEventInputData);
     }
 }

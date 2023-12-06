@@ -1,6 +1,6 @@
-package interface_adapter.CreateNewEvent;
+package interface_adapter.EditEvent;
 
-public class CreateEventState {
+public class EditEventState {
     public String getName() {
         return name;
     }
@@ -17,6 +17,7 @@ public class CreateEventState {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     private String name = "";
     private String nameError = null;
@@ -115,17 +116,17 @@ public class CreateEventState {
     private String end_dateError = null;
     private String end_timeError = null;
 
-    public String getParentAddress() {
-        return parentAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setParentAddress(String parentAddress) {
-        this.parentAddress = parentAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    private String parentAddress = "all";
+    private String address = "";
 
-    public CreateEventState (CreateEventState copy) {
+    public EditEventState(EditEventState copy) {
         this.name = copy.name;
         this.nameError = copy.nameError;
         this.description = copy.description;
@@ -137,7 +138,6 @@ public class CreateEventState {
         this.start_timeError = copy.start_timeError;
         this.end_dateError = copy.end_dateError;
         this.end_timeError = copy.end_timeError;
-        this.parentAddress = copy.parentAddress;
     }
-    public CreateEventState() {}
+    public EditEventState() {}
 }
