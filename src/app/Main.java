@@ -6,9 +6,12 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
+import interface_adapter.tasks.edit_tasks.EditTaskController;
+import interface_adapter.tasks.edit_tasks.EditTaskPresenter;
 import interface_adapter.tasks.edit_tasks.EditTaskViewModel;
 import interface_adapter.tasks.task.TaskViewModel;
 import use_case.tasks.create_tasks.CreateTaskInteractor;
+import use_case.tasks.edit_tasks.EditTaskInteractor;
 import view.CreateEventView;
 import view.MainMenuView;
 import view.TaskView;
@@ -61,11 +64,15 @@ public class Main {
         CreateTaskInteractor taskInteractor = new CreateTaskInteractor(taskPresenter, taskRepository);
         CreateTaskController createTaskController = new CreateTaskController(taskInteractor);
         taskView.setCreateTaskController(createTaskController);
-        //String csvFilePath = "src/Tasks.csv"; // Replace with your actual CSV file path
+        String csvFilePath = "src/Tasks.csv"; // Replace with your actual CSV file path
         DeleteTaskPresenter deleteTaskPresenter = new DeleteTaskPresenter(taskView);
         DeleteTaskInteractor deleteTaskInteractor = new DeleteTaskInteractor(deleteTaskPresenter, taskRepository);
         DeleteTaskController deleteTaskController = new DeleteTaskController(deleteTaskInteractor);
         taskView.setDeleteTaskController(deleteTaskController);
+        EditTaskPresenter editTaskPresenter = new EditTaskPresenter(taskView);
+        EditTaskInteractor editTaskInteractor = new EditTaskInteractor(editTaskPresenter, taskRepository, csvFilePath);
+        EditTaskController editTaskController = new EditTaskController(editTaskInteractor);
+        taskView.setEditTaskController(editTaskController);
         views.add(taskView, taskView.viewName);
         /*TaskView createtaskView = TaskUseCaseFactory.create(taskViewModel, createTaskViewModel, editTaskViewModel, viewManagerModel,userDataAccessObject, "all");
         views.add(createtaskView, createtaskView.viewName);*/

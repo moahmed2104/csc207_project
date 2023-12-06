@@ -78,5 +78,39 @@ public class TaskFileLoader {
 
         return true;
     }
+    public static boolean editTaskInCSV(String filePath, String originalTitle, String newTitle, String newDate, String newDescription) {
+        File inputFile = new File(filePath);
+        File tempFile = new File(inputFile.getAbsolutePath() + ".tmp");
+        boolean isEdited = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+                // Check if the line contains the original task title and date.
+                if (currentLine.startsWith(originalTitle + " (Date")) {
+                    // Write the edited task with the new title, date, and description.
+                    writer.write(newTitle + " (Date " + newDate + ")," + newDescription + System.lineSeparator());
+                    isEdited = true;
+                } else {
+                    writer.write(currentLine + System.lineSeparator());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            tempFile.delete();
+            return false;
+        }
+
+        // If we made an edit, replace the original file with the temp file.
+        if (isEdited) {
+            return inputFile.delete() && tempFile.renameTo(inputFile);
+        } else {
+            tempFile.delete();
+            return false;
+        }
+    }
+
 }
 
