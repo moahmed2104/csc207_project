@@ -92,7 +92,18 @@ public class CreateEventView extends JPanel implements ActionListener, PropertyC
 
         );
 
-        cancel.addActionListener(this); //todo implement
+        cancel.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if(evt.getSource().equals(cancel)) {
+                            createEventController.execute(
+                                    "","","all/all/",LocalDateTime.now(), LocalDateTime.now()
+                            );
+                        }
+                    }
+                }
+
+        );
 
         nameInputField.addKeyListener(new KeyListener() {
             @Override

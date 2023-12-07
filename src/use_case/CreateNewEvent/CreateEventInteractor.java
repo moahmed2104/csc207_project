@@ -28,13 +28,14 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
     public void execute(CreateEventInputData createEventInputData){
 
         HeadItem headItem = eventDataAccessObject.getHeadItem();
+        try {
         Item parent = headItem.navigate(createEventInputData.getParent());
         Description event_description = descriptionFactory.create(
                 createEventInputData.getName(),
                 createEventInputData.getDescription(),
                 parent
         );
-        try {
+
             Event event = eventFactory.create(
                     event_description,
                     createEventInputData.getStart(),
@@ -46,8 +47,9 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
             parent.addSubItem(event);
             eventDataAccessObject.save(event);
             taskRepository.appendTaskToCSV("src/Tasks.csv", createEventInputData.getName(), createEventInputData.getStart().toString(), createEventInputData.getDescription());
-        } catch (NoSuchElementException e){
-            // todo handle this
+            eventPresenter.prepareSucessView(new CreateEventOutputData());
+        } catch (Exception e){
+            eventPresenter.prepareFailView("woops");
         }
 
     }

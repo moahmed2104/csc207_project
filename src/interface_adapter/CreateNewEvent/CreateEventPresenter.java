@@ -14,12 +14,14 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
     }
     @Override
     public void prepareSucessView(CreateEventOutputData outputData) {
-        System.out.println("Success");
+        viewManagerModel.setActiveView("Main Menu"); // replace with actual view name
+        viewManagerModel.firePropertyChanged();
     }
 
     @Override
     public void prepareFailView(String error) {
-        System.out.println("Failure");
+        viewManagerModel.setActiveView("Main Menu"); // replace with actual view name
+        viewManagerModel.firePropertyChanged();
 
     }
 }
