@@ -43,6 +43,7 @@ public class Main {
 
 
         CreateEventViewModel createEventViewModel = new CreateEventViewModel();
+        TaskViewModel taskViewModel = new TaskViewModel();
         DescriptionFactory descriptionFactory = new DescriptionFactory();
         HeadItem headItem = new HeadItem(descriptionFactory);
         DummyDataAccess userDataAccessObject = new DummyDataAccess(headItem);
