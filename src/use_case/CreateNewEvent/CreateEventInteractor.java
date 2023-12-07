@@ -1,7 +1,10 @@
 package use_case.CreateNewEvent;
 
+import data_access.TaskRepository;
+import data_access.TaskRepositoryAdapter;
 import entity.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 public class CreateEventInteractor implements CreateEventInputBoundary{
@@ -9,6 +12,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
     final CreateEventOutputBoundary eventPresenter;
     final DescriptionFactory descriptionFactory;
     final EventFactory eventFactory;
+    TaskRepository taskRepository;
 
     public CreateEventInteractor(CreateEventDataAccessInterface eventDataAccessObject,
                                  CreateEventOutputBoundary eventPresenter,
@@ -18,19 +22,21 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
         this.eventPresenter = eventPresenter;
         this.descriptionFactory = descriptionFactory;
         this.eventFactory = eventFactory;
+        this.taskRepository = new TaskRepositoryAdapter();
     }
 
     @Override
     public void execute(CreateEventInputData createEventInputData){
 
         HeadItem headItem = eventDataAccessObject.getHeadItem();
+        try {
         Item parent = headItem.navigate(createEventInputData.getParent());
         Description event_description = descriptionFactory.create(
                 createEventInputData.getName(),
                 createEventInputData.getDescription(),
                 parent
         );
-        try {
+
             Event event = eventFactory.create(
                     event_description,
                     createEventInputData.getStart(),
@@ -41,8 +47,10 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
             );
             parent.addSubItem(event);
             eventDataAccessObject.save(event);
-        } catch (NoSuchElementException e){
-            // todo handle this
+            taskRepository.appendTaskToCSV("src/Tasks.csv", "EVENT: " + createEventInputData.getName(), createEventInputData.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), createEventInputData.getDescription());
+            eventPresenter.prepareSucessView(new CreateEventOutputData());
+        } catch (Exception e){
+            eventPresenter.prepareFailView("woops");
         }
 
     }

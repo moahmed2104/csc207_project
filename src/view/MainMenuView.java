@@ -17,13 +17,18 @@ public class MainMenuView extends JPanel {
     private final SyncDataAccessInterface syncDataAccessInterface;
     private final Calendar calendar;
 
+    private final TaskView taskview;
+
+
     public final String viewName = "Main Menu";
+
 
     public MainMenuView(ViewManagerModel viewManagerModel, SyncController syncController, SyncDataAccessInterface syncDataAccessInterface, Calendar calendar) {
         this.viewManagerModel = viewManagerModel;
         this.syncController = syncController;
         this.syncDataAccessInterface = syncDataAccessInterface;
         this.calendar = calendar;
+        this.taskview = taskView;
         initializeUI();
     }
 
@@ -58,8 +63,11 @@ public class MainMenuView extends JPanel {
         taskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                taskview.refreshTaskList();
+                taskview.updateTaskListUI();
                 viewManagerModel.setActiveView("Task Viewer");
                 viewManagerModel.firePropertyChanged();
+
             }
         });
 
@@ -67,8 +75,11 @@ public class MainMenuView extends JPanel {
         eventsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewManagerModel.setActiveView("Test Create Event View");
+                taskview.refreshTaskList();
+                taskview.updateTaskListUI();
+                viewManagerModel.setActiveView("Create Event View");
                 viewManagerModel.firePropertyChanged();
+
             }
         });
 
@@ -78,6 +89,7 @@ public class MainMenuView extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 viewManagerModel.setActiveView("FoldersViewName"); // replace with the name used in your CardLayout for the folders view
                 viewManagerModel.firePropertyChanged();
+
             }
         });
         syncButton.addActionListener(new ActionListener() {
