@@ -10,9 +10,12 @@ import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
 import interface_adapter.tasks.create_tasks.CreateTaskViewModel;
 import interface_adapter.tasks.delete_tasks.DeleteTaskController;
 import interface_adapter.tasks.delete_tasks.DeleteTaskPresenter;
+import interface_adapter.tasks.edit_tasks.EditTaskController;
+import interface_adapter.tasks.edit_tasks.EditTaskPresenter;
 import interface_adapter.tasks.task.TaskViewModel;
 import use_case.tasks.create_tasks.CreateTaskInteractor;
 import use_case.tasks.delete_tasks.DeleteTaskInteractor;
+import use_case.tasks.edit_tasks.EditTaskInteractor;
 import view.CreateEventView;
 import view.TaskView;
 import view.ViewManager;
@@ -47,8 +50,7 @@ public class Main {
         // This keeps track of and manages which view is currently showing.
         ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
-        MainMenuView mainMenuView = new MainMenuView(viewManagerModel);
-        views.add(mainMenuView, mainMenuView.viewName);
+
 
 
         CreateEventViewModel createEventViewModel = new CreateEventViewModel();
@@ -68,16 +70,24 @@ public class Main {
         CreateTaskInteractor taskInteractor = new CreateTaskInteractor(taskPresenter, taskRepository);
         CreateTaskController createTaskController = new CreateTaskController(taskInteractor);
         taskView.setCreateTaskController(createTaskController);
-        //String csvFilePath = "src/Tasks.csv"; // Replace with your actual CSV file path
+        String csvFilePath = "src/Tasks.csv"; // Replace with your actual CSV file path
         DeleteTaskPresenter deleteTaskPresenter = new DeleteTaskPresenter(taskView);
         DeleteTaskInteractor deleteTaskInteractor = new DeleteTaskInteractor(deleteTaskPresenter, taskRepository);
         DeleteTaskController deleteTaskController = new DeleteTaskController(deleteTaskInteractor);
+        EditTaskPresenter editTaskPresenter = new EditTaskPresenter(taskView);
+        EditTaskInteractor editTaskInteractor = new EditTaskInteractor(editTaskPresenter, taskRepository, csvFilePath);
+        EditTaskController editTaskController = new EditTaskController(editTaskInteractor);
+        taskView.setEditTaskController(editTaskController);
+        taskView.setEditTaskController(editTaskController);
         taskView.setDeleteTaskController(deleteTaskController);
         views.add(taskView, taskView.viewName);
 
 
         CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
         views.add(createEventView, createEventView.viewName);
+
+        MainMenuView mainMenuView = new MainMenuView(viewManagerModel, taskView);
+        views.add(mainMenuView, mainMenuView.viewName);
 
         viewManagerModel.setActiveView(mainMenuView.viewName);
         viewManagerModel.firePropertyChanged();

@@ -4,6 +4,7 @@ import data_access.TaskRepository;
 import data_access.TaskRepositoryAdapter;
 import entity.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 public class CreateEventInteractor implements CreateEventInputBoundary{
@@ -46,7 +47,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
             );
             parent.addSubItem(event);
             eventDataAccessObject.save(event);
-            taskRepository.appendTaskToCSV("src/Tasks.csv", createEventInputData.getName(), createEventInputData.getStart().toString(), createEventInputData.getDescription());
+            taskRepository.appendTaskToCSV("src/Tasks.csv", "EVENT: " + createEventInputData.getName(), createEventInputData.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), createEventInputData.getDescription());
             eventPresenter.prepareSucessView(new CreateEventOutputData());
         } catch (Exception e){
             eventPresenter.prepareFailView("woops");

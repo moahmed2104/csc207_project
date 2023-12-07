@@ -19,7 +19,7 @@ public class CreateTaskInteractor {
             // Using taskRepository to append the task
             boolean isSaved = taskRepository.appendTaskToCSV(
                     requestModel.getCsvFilePath(),
-                    requestModel.getTitle(),
+                    "TASK: " + requestModel.getTitle(),
                     requestModel.getDate(),
                     requestModel.getDescription()
             );

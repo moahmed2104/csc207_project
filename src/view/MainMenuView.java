@@ -10,10 +10,14 @@ import java.awt.event.ActionListener;
 public class MainMenuView extends JPanel {
     private final ViewManagerModel viewManagerModel;
 
+    private final TaskView taskview;
+
+
     public final String viewName = "Main Menu";
 
-    public MainMenuView(ViewManagerModel viewManagerModel) {
+    public MainMenuView(ViewManagerModel viewManagerModel,TaskView taskView) {
         this.viewManagerModel = viewManagerModel;
+        this.taskview = taskView;
         initializeUI();
     }
 
@@ -46,8 +50,11 @@ public class MainMenuView extends JPanel {
         taskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                taskview.refreshTaskList();
+                taskview.updateTaskListUI();
                 viewManagerModel.setActiveView("Task Viewer");
                 viewManagerModel.firePropertyChanged();
+
             }
         });
 
@@ -55,8 +62,11 @@ public class MainMenuView extends JPanel {
         eventsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                taskview.refreshTaskList();
+                taskview.updateTaskListUI();
                 viewManagerModel.setActiveView("Create Event View");
                 viewManagerModel.firePropertyChanged();
+
             }
         });
 
@@ -66,6 +76,7 @@ public class MainMenuView extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 viewManagerModel.setActiveView("FoldersViewName"); // replace with the name used in your CardLayout for the folders view
                 viewManagerModel.firePropertyChanged();
+
             }
         });
 

@@ -202,7 +202,7 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         if (evt.getSource().equals(back)) {
             //JOptionPane.showMessageDialog(null,"TEST");
 
-            viewManagerModel.setActiveView("Main Menu"); // replace with actual view name
+            viewManagerModel.setActiveView("Main Menu");
             viewManagerModel.firePropertyChanged();
         }
     }
