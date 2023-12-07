@@ -15,10 +15,11 @@ public class DescriptionFactory {
         return String.join(", ", idList);
     }
 
-    public Description create(String name, String description, String address){
-        return new Description(name, generateID(), description, address);
+    public Description create(String name, String id, String description, String address){
+        Description desc = new Description(name, id, description, address);
+        return desc;
     }
-    public Description create(String name, String description, Item parent, String descriptor){
+    public Description create(String name, String id, String description, Item parent, String descriptor){
         String desc = descriptor;
         String parentAddress = parent.getDescription().getAddress();
         if (parent.hasSubItem(descriptor)) {
@@ -32,10 +33,18 @@ public class DescriptionFactory {
         }
 
         String descAddress = parentAddress + "/" + desc;
-        return create(name, description, descAddress);
+        return create(name, id, description, descAddress);
+    }
+    public Description create(String name, String id, String description, Item parent) {
+        return create(name, id, description, parent, name); // uses the name as a descriptor by default
     }
     public Description create(String name, String description, Item parent) {
-        return create(name, description, parent, name); // uses the name as a descriptor by default
+        return create(name, generateID(), description, parent, name);
     }
-
+    public Description create(String name, String description, Item parent, String descriptor){
+        return create(name, generateID(), description, parent, descriptor);
+    }
+    public Description create(String name, String description, String address){
+        return create(name, generateID(), description, address);
+    }
 }

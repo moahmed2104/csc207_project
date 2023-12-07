@@ -1,17 +1,18 @@
 package api;
 
-import entity.Event;
 import entity.Folder;
+import entity.Item;
 
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 public interface Calendar {
-    List<String> getCalendars();
-    void insertCalendar(Folder folder);
-    List<Event> getEvents(String CalendarID, LocalDateTime start, LocalDateTime end);
-    void insertEvent(String CalendarID, Event event);
-    void deleteEvent(String CalendarID, Event event);
-    void updateEvent(String CalendarID, Event event);
 
+    String getCalendarID();
+
+    void insertCalendar(Folder folder);
+    HashMap<String, List<HashMap<String, String>>> getEvents(String CalendarID);
+    void insertItem(String CalendarID, Item item);
+    void deleteEvent(String CalendarID, Item item);
+    void updateEvent(String CalendarID, Item item);
 }
