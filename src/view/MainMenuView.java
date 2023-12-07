@@ -55,7 +55,7 @@ public class MainMenuView extends JPanel {
         eventsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewManagerModel.setActiveView("Test Create Event View");
+                viewManagerModel.setActiveView("Create Event View");
                 viewManagerModel.firePropertyChanged();
             }
         });
