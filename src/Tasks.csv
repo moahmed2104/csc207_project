@@ -1,8 +1,4 @@
-TASK: Tie shoes (Date 07/11/2019),Retrieve shoes,Undo laces on left shoe,Undo laces on right shoe,Put left shoe on left foot,Tie left shoe laces,Put right shoe on right foot,Tie right shoe laces
-TASK: Water plants (Date 15/11/2019),Fill watering can,Water all indoor plants,Water garden plants,Check soil moisture levels
-TASK: 236 Test (Date 08/12/2023),Study lecture,Study Past Exams, Study worksheets
 
-EVENT: Airplane (Date 12/12/2023),Flying To Florida
-EVENT: Testing (Date 12/12/2023),Testy
 
-TASK: Going to park (Date 12-12-2023),Bring dog, Bring pop bag
+
+EVENT: Birthday Party (Date 12/12/2023),Going to friends bday

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.text.ParseException;
 
 public class MainMenuView extends JPanel {
     private final ViewManagerModel viewManagerModel;
@@ -23,12 +24,12 @@ public class MainMenuView extends JPanel {
     public final String viewName = "Main Menu";
 
 
-    public MainMenuView(ViewManagerModel viewManagerModel, SyncController syncController, SyncDataAccessInterface syncDataAccessInterface, Calendar calendar) {
+    public MainMenuView(ViewManagerModel viewManagerModel, TaskView taskview, SyncController syncController, SyncDataAccessInterface syncDataAccessInterface, Calendar calendar) {
         this.viewManagerModel = viewManagerModel;
         this.syncController = syncController;
         this.syncDataAccessInterface = syncDataAccessInterface;
         this.calendar = calendar;
-        this.taskview = taskView;
+        this.taskview = taskview;
         initializeUI();
     }
 
@@ -50,7 +51,7 @@ public class MainMenuView extends JPanel {
         // Add buttons to the buttons panel
         buttonsPanel.add(taskButton);
         buttonsPanel.add(eventsButton);
-        buttonsPanel.add(foldersButton);
+        //buttonsPanel.add(foldersButton);
         buttonsPanel.add(syncButton);
 
         // Add title label and buttons panel to the MainMenuView
@@ -102,6 +103,8 @@ public class MainMenuView extends JPanel {
                                 syncDataAccessInterface.getLocalDescriptions(),
                                 syncDataAccessInterface.getRemoteItems(calendar, calendarID), calendar, calendarID);
                     } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (ParseException ex) {
                         throw new RuntimeException(ex);
                     }
                 }

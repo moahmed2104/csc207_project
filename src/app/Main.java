@@ -1,9 +1,14 @@
 package app;
+import api.Calendar;
+import api.GoogleCalendar;
 import data_access.DummyDataAccess;
+import data_access.SyncDataAccess;
 import data_access.TaskRepositoryAdapter;
 import entity.DescriptionFactory;
+import entity.EventFactory;
 import entity.HeadItem;
 import interface_adapter.CreateNewEvent.CreateEventViewModel;
+import interface_adapter.Sync.SyncController;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.tasks.create_tasks.CreateTaskController;
 import interface_adapter.tasks.create_tasks.CreateTaskPresenter;
@@ -13,6 +18,7 @@ import interface_adapter.tasks.delete_tasks.DeleteTaskPresenter;
 import interface_adapter.tasks.edit_tasks.EditTaskController;
 import interface_adapter.tasks.edit_tasks.EditTaskPresenter;
 import interface_adapter.tasks.task.TaskViewModel;
+import use_case.sync.SyncInteractor;
 import use_case.tasks.create_tasks.CreateTaskInteractor;
 import use_case.tasks.delete_tasks.DeleteTaskInteractor;
 import use_case.tasks.edit_tasks.EditTaskInteractor;
@@ -86,10 +92,19 @@ public class Main {
         CreateEventView createEventView = EventUseCaseFactory.create(viewManagerModel, createEventViewModel, userDataAccessObject, "all");
         views.add(createEventView, createEventView.viewName);
 
-        MainMenuView mainMenuView = new MainMenuView(viewManagerModel, taskView);
-        views.add(mainMenuView, mainMenuView.viewName);
+        GoogleCalendar calendar = new GoogleCalendar();
+        EventFactory eventFactory = new EventFactory();
+        SyncDataAccess syncDataAccess = new SyncDataAccess();
+        SyncInteractor syncInteractor = new SyncInteractor(descriptionFactory,eventFactory,userDataAccessObject);
+        SyncController syncController = new SyncController(syncInteractor);
 
-        viewManagerModel.setActiveView(mainMenuView.viewName);
+        MainMenuView mainMenuView = new MainMenuView(viewManagerModel, taskView, syncController, syncDataAccess, calendar);
+
+        views.add(mainMenuView, mainMenuView.viewName);
+        CaesarView start = new CaesarView(viewManagerModel);
+        views.add(start,"Caesar View");
+
+        viewManagerModel.setActiveView("Caesar View");
         viewManagerModel.firePropertyChanged();
         application.pack();
         application.setVisible(true);

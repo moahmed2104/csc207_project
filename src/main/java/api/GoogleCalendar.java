@@ -6,17 +6,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 public class GoogleCalendar implements Calendar {
     private static final String API_URL = "https://www.googleapis.com/calendar/v3";
-    private static final String OAUTH_ID = System.getenv("OAUTH_ID");
+    private static final String OAUTH_ID = "ya29.a0AfB_byDQQ5WZM9CLwJXNmFWhS7_rgqeg6fDhFCmXenso48T2YofIqns6jv2TyQLmYdwjDprdoAUgGvvQ7Kww6Wu_sitzME9_zFbcUxON_YLPHmsd-93K3_OHT6empC7kaUOAyqLSofp_cnWjIZjPGVZsGP5f3ueaZtXLaCgYKAUYSARASFQHGX2Miy0ZGBl-5dDJlHZE-gbIrEQ0171";
 
     @Override
     public String getCalendarID() {
@@ -29,6 +31,7 @@ public class GoogleCalendar implements Calendar {
         try {
             Response response = client.newCall(request).execute();
             JSONObject responseBody = new JSONObject(response.body().string());
+            System.out.println(responseBody);
             JSONArray items = responseBody.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
                 if (items.getJSONObject(i).getBoolean("primary")) return items.getJSONObject(i).getString("id");
@@ -83,20 +86,29 @@ public class GoogleCalendar implements Calendar {
             for (int i = 0; i < items.length(); i++) {
                 HashMap<String, String> event = new HashMap<>();
                 JSONObject item = items.getJSONObject(i);
-                String type;
+                String type = "events";
                 if (isAllDay(item)){
-                    type = "task";
+                    type = "tasks";
                     event.put("date", item.getJSONObject("start").getString("date"));
                 }
                 else{
-                    type = "event";
+                    type = "events";
                     event.put("start", item.getJSONObject("start").getString("dateTime"));
                     event.put("end", item.getJSONObject("end").getString("dateTime"));
                 }
                 event.put("name", item.getString("summary"));
                 event.put("description", item.getString("description"));
                 event.put("id", item.getString("id"));
-                events.get(type).add(event);
+
+                try{
+                    events.get(type).add(event);
+                }
+                catch (NullPointerException e){
+                    List<HashMap<String, String>> x = new ArrayList<>();
+                    x.add(event);
+                    events.put(type, x);
+                }
+
             }
             return events;
         } catch (IOException e) {
@@ -106,14 +118,42 @@ public class GoogleCalendar implements Calendar {
 
     @Override
     public void insertItem(String CalendarID, Item item){
-        if (item instanceof Event) insertEvent(CalendarID, ((Event) item));
-        else if (item instanceof Tasks) insertTask(CalendarID, ((Tasks) item));
+        if (item instanceof Event)
+        { Event event = (Event) item;
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            HashMap<String, LocalDateTime> start = new HashMap<>();
+            HashMap<String, LocalDateTime> end = new HashMap<>();
+            start.put("dateTime", event.getStartTime());
+            end.put("dateTime", event.getEndTime());
+            Description desc = event.getDescription();
+            MediaType mediaType = MediaType.parse("application/json");
+            JSONObject requestbody = new JSONObject();
+            requestbody.put("start", start);
+            requestbody.put("end", end);
+            requestbody.put("description", desc.getDescription());
+            requestbody.put("summary", desc.getName());
+            requestbody.put("id", desc.getID());
+            RequestBody body = RequestBody.create(mediaType, requestbody.toString());
+            Request request = new Request.Builder()
+                    .url(String.format("%s/calendars/%s/events", API_URL, CalendarID))
+                    .method("POST", body)
+                    .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
+                    .addHeader("Accept", "application/json")
+                    .build();
+            try {
+
+                client.newCall(request).execute().body().string();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
-    private void insertEvent(String CalendarID, Event event) {
+    private void insertEvent(String CalendarID, Event event)  {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         HashMap<String, LocalDateTime> start = new HashMap<>();
         HashMap<String, LocalDateTime> end = new HashMap<>();
+
         start.put("dateTime", event.getStartTime());
         end.put("dateTime", event.getEndTime());
         insertItemRequest(CalendarID, client, event, start, end);
@@ -121,22 +161,25 @@ public class GoogleCalendar implements Calendar {
     private void insertTask(String CalendarID, Tasks task) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         LocalDate date = LocalDate.parse(task.getDate());
-        HashMap<String, LocalDate> start = new HashMap<>();
-        HashMap<String, LocalDate> end = new HashMap<>();
-        start.put("date", date);
-        end.put("date", date);
+        HashMap<String, LocalDateTime> start = new HashMap<>();
+        HashMap<String, LocalDateTime> end = new HashMap<>();
+        start.put("date", date.atStartOfDay());
+        end.put("date", date.atStartOfDay());
         insertItemRequest(CalendarID, client, task, start, end);
     }
 
     private void insertItemRequest(String CalendarID, OkHttpClient client, Item item,
-                                   HashMap<String, ?> start, HashMap<String, ?> end) {
+                                   HashMap<String, LocalDateTime> start, HashMap<String, LocalDateTime> end) {
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject requestbody = new JSONObject();
         requestbody.put("start", start);
+        System.out.println(start);
         requestbody.put("end", end);
+        System.out.println(end);
         requestbody.put("description", item.getDescription().getDescription());
         requestbody.put("summary", item.getDescription().getName());
         requestbody.put("id", item.getDescription().getID());
+        System.out.println(item.getDescription().getID());
         RequestBody body = RequestBody.create(mediaType, requestbody.toString());
         Request request = new Request.Builder()
                 .url(String.format("%s/calendars/%s/events", API_URL, CalendarID))
@@ -144,8 +187,10 @@ public class GoogleCalendar implements Calendar {
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
                 .addHeader("Accept", "application/json")
                 .build();
+        System.out.println(request);
         try {
             client.newCall(request).execute();
+            System.out.println(client.newCall(request).execute().body().string());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
