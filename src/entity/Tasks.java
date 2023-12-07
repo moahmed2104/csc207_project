@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class Tasks implements Item{
+public class Tasks implements Item {
     Description description;
     List<Item> subItem;
 
@@ -13,7 +13,7 @@ public class Tasks implements Item{
 
     String date;
 
-    public Tasks(Description description, String date, Item parentItem){
+    public Tasks(Description description, String date, Item parentItem) {
         this.description = description;
         this.subItem = new ArrayList<Item>();
         this.parentItem = parentItem;
@@ -57,9 +57,5 @@ public class Tasks implements Item{
     @Override
     public Item navigate(String address) throws NoSuchElementException {
         return null;
-    }
-
-    public void changeStatus() {
-
     }
 }

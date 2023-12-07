@@ -214,13 +214,6 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
 
 
 
-    private String[] getSubtasksForTask(String taskTitle) {
-        // Replace with actual logic to fetch task details
-        return dummyTaskDetails.getOrDefault(taskTitle, new String[]{});
-    }
-
-
-
 
     /*public void refreshTaskDetailsPanel(String taskTitle) {
         // Get the updated task details
@@ -238,32 +231,6 @@ public class TaskView extends JPanel implements ActionListener, PropertyChangeLi
         taskDetailsPanel.revalidate();
         taskDetailsPanel.repaint();
     }*/
-
-    public void setTaskDetailsText(String task) {
-        // Get the current state array, or create a new one if none exists
-        boolean[] checkboxStates = taskCheckboxStates.computeIfAbsent(task, k -> {
-            String[] subtasks = dummyTaskDetails.get(task);
-            return new boolean[subtasks.length]; // Default to all false
-        });
-
-        // Remove any existing checkboxes
-        taskDetailsPanel.removeAll();
-
-        // Add checkboxes for the task
-        String[] subtasks = dummyTaskDetails.get(task);
-        for (int i = 0; i < subtasks.length; i++) {
-            JCheckBox checkBox = new JCheckBox(subtasks[i], checkboxStates[i]);
-            int index = i;
-            checkBox.addActionListener(e -> {
-                checkboxStates[index] = checkBox.isSelected(); // Update the state when the checkbox is toggled
-            });
-            taskDetailsPanel.add(checkBox);
-        }
-
-        taskDetailsPanel.revalidate();
-        taskDetailsPanel.repaint();
-    }
-
 
 
     @Override

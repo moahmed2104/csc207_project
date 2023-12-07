@@ -134,10 +134,12 @@ public class EditEventState {
         this.start_date = copy.start_date;
         this.start_time = copy.start_time;
         this.end_date = copy.end_date;
+        this.end_time = copy.end_time;
         this.start_dateError = copy.start_dateError;
         this.start_timeError = copy.start_timeError;
         this.end_dateError = copy.end_dateError;
         this.end_timeError = copy.end_timeError;
+        this.address = copy.address;
     }
     public EditEventState() {}
 }

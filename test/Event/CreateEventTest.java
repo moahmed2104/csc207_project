@@ -79,36 +79,6 @@ public class CreateEventTest {
         JButton button = getButton();
         button.doClick();
     }
-    public void filloutBoxes(){
-        JFrame app = null;
-        Window[] windows = Window.getWindows();
-        for (Window window : windows) {
-            if (window instanceof JFrame) {
-                app = (JFrame) window;
-            }
-        }
-
-        assertNotNull(app); // found the window?
-
-        Component root = app.getComponent(0);
-
-        Component cp = ((JRootPane) root).getContentPane();
-
-        JPanel jp = (JPanel) cp;
-
-        JPanel jp2 = (JPanel) jp.getComponent(0);
-
-        CreateEventView sv = (CreateEventView) jp2.getComponent(0);
-
-        for (int i = 1; i<7; i++){
-            JPanel panel = (JPanel) sv.getComponent(i);
-            JTextField field = (JTextField) panel.getComponent(1);
-            field.getActionListeners();
-
-        }
-
-
-    }
     @org.junit.Test
     public void testCreateEvent() {
         DescriptionFactory descriptionFactory = new DescriptionFactory();

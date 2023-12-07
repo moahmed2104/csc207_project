@@ -15,7 +15,7 @@ public class CreateEventViewModel extends ViewModel {
     public static final String END_DATE_LABEL = "Ending date:";
     public static final String END_TIME_LABEL = "Ending time:";
     public static final String CREATE_EVENT_LABEL = "Create";
-    public static final String CANCEL_BUTTON_LABEL = "Cancel";
+    public static final String CANCEL_BUTTON_LABEL = "Back";
     private CreateEventState state = new CreateEventState();
 
     public CreateEventViewModel() {super("Create Event");}

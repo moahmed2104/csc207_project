@@ -4,7 +4,6 @@ import java.util.*;
 
 public class HeadItem implements Item{
     private List<Item> subItem;
-    private DescriptionFactory descriptionFactory;
     private Description description;
 
     //todo finish writing this class
@@ -61,7 +60,6 @@ public class HeadItem implements Item{
 
     public HeadItem(DescriptionFactory descriptionFactory){
         this.subItem = new ArrayList<Item>();
-        this.descriptionFactory = descriptionFactory;
         this.description = descriptionFactory.create("All", "All items in your planner", "all");
     }
 }

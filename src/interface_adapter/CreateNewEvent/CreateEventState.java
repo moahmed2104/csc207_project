@@ -23,22 +23,6 @@ public class CreateEventState {
     private String description = "";
     private String descriptionError = null;
 
-    public String getNameError() {
-        return nameError;
-    }
-
-    public void setNameError(String nameError) {
-        this.nameError = nameError;
-    }
-
-    public String getDescriptionError() {
-        return descriptionError;
-    }
-
-    public void setDescriptionError(String descriptionError) {
-        this.descriptionError = descriptionError;
-    }
-
     public String getStart_date() {
         return start_date;
     }
@@ -71,37 +55,6 @@ public class CreateEventState {
         this.end_time = end_time;
     }
 
-    public String getStart_dateError() {
-        return start_dateError;
-    }
-
-    public void setStart_dateError(String start_dateError) {
-        this.start_dateError = start_dateError;
-    }
-
-    public String getStart_timeError() {
-        return start_timeError;
-    }
-
-    public void setStart_timeError(String start_timeError) {
-        this.start_timeError = start_timeError;
-    }
-
-    public String getEnd_dateError() {
-        return end_dateError;
-    }
-
-    public void setEnd_dateError(String end_dateError) {
-        this.end_dateError = end_dateError;
-    }
-
-    public String getEnd_timeError() {
-        return end_timeError;
-    }
-
-    public void setEnd_timeError(String end_timeError) {
-        this.end_timeError = end_timeError;
-    }
 
     private String start_date = "";
     private String end_date = "";
@@ -133,6 +86,7 @@ public class CreateEventState {
         this.start_date = copy.start_date;
         this.start_time = copy.start_time;
         this.end_date = copy.end_date;
+        this.end_time = copy.end_time;
         this.start_dateError = copy.start_dateError;
         this.start_timeError = copy.start_timeError;
         this.end_dateError = copy.end_dateError;
