@@ -12,7 +12,6 @@ A class that represents a particular event in a calendar or task description
 
 public class Event implements Item{
     Description description;
-    String id;
     List<Item> subItem;
     Item parentItem;
     LocalDateTime startTime;

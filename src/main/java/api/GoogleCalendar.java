@@ -1,15 +1,13 @@
 package api;
 
-import entity.Description;
-import entity.Event;
-import entity.Folder;
+import entity.*;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,12 +18,8 @@ public class GoogleCalendar implements Calendar {
     private static final String API_URL = "https://www.googleapis.com/calendar/v3";
     private static final String OAUTH_ID = System.getenv("OAUTH_ID");
 
-    public static String getOauthId() {
-        return OAUTH_ID;
-    }
-
     @Override
-    public List<String> getCalendars() {
+    public String getCalendarID() {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
                 .url(String.format("%s/users/me/calendarList", API_URL))
@@ -34,14 +28,12 @@ public class GoogleCalendar implements Calendar {
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            System.out.println(response);
-            List<String> calendarIDs = new ArrayList<>();
             JSONObject responseBody = new JSONObject(response.body().string());
             JSONArray items = responseBody.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
-                calendarIDs.add(items.getJSONObject(i).getString("id"));
+                if (items.getJSONObject(i).getBoolean("primary")) return items.getJSONObject(i).getString("id");
             }
-            return calendarIDs;
+            throw new RuntimeException();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -68,50 +60,83 @@ public class GoogleCalendar implements Calendar {
                 .addHeader("Accept", "application/json")
                 .build();
         try {
-            Response response = client.newCall(request).execute();
+            client.newCall(request).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Event> getEvents(String CalendarID, LocalDateTime startTime, LocalDateTime endTime) {
+    public HashMap<String, List<HashMap<String, String>>> getEvents(String CalendarID) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
-                .url(String.format("%s/calendars/%s/events?timeMin=%s&timeMax=%s",
-                        API_URL, CalendarID, startTime, endTime))
+                .url(String.format("%s/calendars/%s/events",
+                        API_URL, CalendarID))
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
                 .addHeader("Accept", "application/json")
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            List<String> events = new ArrayList<>();
+            HashMap<String, List<HashMap<String, String>>> events = new HashMap<>();
             JSONObject responseBody = new JSONObject(response.body().string());
             JSONArray items = responseBody.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
-                // if event in datastore then add the event to list, else create event and add to list
+                HashMap<String, String> event = new HashMap<>();
+                JSONObject item = items.getJSONObject(i);
+                String type;
+                if (isAllDay(item)){
+                    type = "task";
+                    event.put("date", item.getJSONObject("start").getString("date"));
+                }
+                else{
+                    type = "event";
+                    event.put("start", item.getJSONObject("start").getString("dateTime"));
+                    event.put("end", item.getJSONObject("end").getString("dateTime"));
+                }
+                event.put("name", item.getString("summary"));
+                event.put("description", item.getString("description"));
+                event.put("id", item.getString("id"));
+                events.get(type).add(event);
             }
-            return null;
+            return events;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void insertEvent(String CalendarID, Event event) {
+    public void insertItem(String CalendarID, Item item){
+        if (item instanceof Event) insertEvent(CalendarID, ((Event) item));
+        else if (item instanceof Tasks) insertTask(CalendarID, ((Tasks) item));
+    }
+
+    private void insertEvent(String CalendarID, Event event) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         HashMap<String, LocalDateTime> start = new HashMap<>();
         HashMap<String, LocalDateTime> end = new HashMap<>();
         start.put("dateTime", event.getStartTime());
         end.put("dateTime", event.getEndTime());
-        Description desc = event.getDescription();
+        insertItemRequest(CalendarID, client, event, start, end);
+    }
+    private void insertTask(String CalendarID, Tasks task) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        LocalDate date = LocalDate.parse(task.getDate());
+        HashMap<String, LocalDate> start = new HashMap<>();
+        HashMap<String, LocalDate> end = new HashMap<>();
+        start.put("date", date);
+        end.put("date", date);
+        insertItemRequest(CalendarID, client, task, start, end);
+    }
+
+    private void insertItemRequest(String CalendarID, OkHttpClient client, Item item,
+                                   HashMap<String, ?> start, HashMap<String, ?> end) {
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject requestbody = new JSONObject();
         requestbody.put("start", start);
         requestbody.put("end", end);
-        requestbody.put("description", desc.getDescription());
-        requestbody.put("summary", desc.getName());
-        requestbody.put("id", desc.getID());
+        requestbody.put("description", item.getDescription().getDescription());
+        requestbody.put("summary", item.getDescription().getName());
+        requestbody.put("id", item.getDescription().getID());
         RequestBody body = RequestBody.create(mediaType, requestbody.toString());
         Request request = new Request.Builder()
                 .url(String.format("%s/calendars/%s/events", API_URL, CalendarID))
@@ -120,16 +145,16 @@ public class GoogleCalendar implements Calendar {
                 .addHeader("Accept", "application/json")
                 .build();
         try {
-            Response response = client.newCall(request).execute();
+            client.newCall(request).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void deleteEvent(String CalendarID, Event event) {
+    public void deleteEvent(String CalendarID, Item item) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        String EventID = event.getDescription().getID();
+        String EventID = item.getDescription().getID();
         Request request = new Request.Builder()
                 .url(String.format("%s/calendars/%s/events/%s", API_URL, CalendarID, EventID))
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
@@ -137,17 +162,17 @@ public class GoogleCalendar implements Calendar {
                 .delete()
                 .build();
         try {
-            Response response = client.newCall(request).execute();
+            client.newCall(request).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void updateEvent(String CalendarID, Event event) {
-        HashMap<String, String> differences = compareEvent(CalendarID, event);
+    public void updateEvent(String CalendarID, Item item) {
+        HashMap<String, String> differences = compareEvent(CalendarID, item);
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        String EventID = event.getDescription().getID();
+        String itemID = item.getDescription().getID();
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject requestbody = new JSONObject();
         if (differences.containsKey("start")) {
@@ -160,25 +185,30 @@ public class GoogleCalendar implements Calendar {
             end.put("dateTime", LocalDateTime.parse(differences.get("end")));
             requestbody.put("end", end);
         }
+        if (differences.containsKey("date")) {
+            HashMap<String, LocalDate> date = new HashMap<>();
+            date.put("date", LocalDate.parse(differences.get("date")));
+            requestbody.put("date", date);
+        }
         if (differences.containsKey("summary")) requestbody.put("summary", differences.get("summary"));
         if (differences.containsKey("description")) requestbody.put("description", differences.get("description"));
         RequestBody body = RequestBody.create(mediaType, requestbody.toString());
         Request request = new Request.Builder()
-                .url(String.format("%s/calendars/%s/events/%s", API_URL, CalendarID, EventID))
+                .url(String.format("%s/calendars/%s/events/%s", API_URL, CalendarID, itemID))
                 .put(body)
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
                 .addHeader("Accept", "application/json")
                 .build();
         try {
-            Response response = client.newCall(request).execute();
+            client.newCall(request).execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Boolean eventExists(String CalendarID, Event event) {
+    private Boolean eventExists(String CalendarID, Item item) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        String EventID = event.getDescription().getID();
+        String EventID = item.getDescription().getID();
         Request request = new Request.Builder()
                 .url(String.format("%s/calendars/%s/events/%s", API_URL, CalendarID, EventID))
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
@@ -196,10 +226,10 @@ public class GoogleCalendar implements Calendar {
         }
     }
 
-    private JSONObject getEvent(String CalendarID, Event event) {
-        if (eventExists(CalendarID, event) == FALSE) insertEvent(CalendarID, event);
+    private JSONObject getEvent(String CalendarID, Item item) {
+        if (!eventExists(CalendarID, item)) insertItem(CalendarID, item);
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        String EventID = event.getDescription().getID();
+        String EventID = item.getDescription().getID();
         Request request = new Request.Builder()
                 .url(String.format("%s/calendars/%s/events/%s", API_URL, CalendarID, EventID))
                 .addHeader("Authorization", String.format("Bearer %s", OAUTH_ID))
@@ -207,30 +237,44 @@ public class GoogleCalendar implements Calendar {
                 .build();
         try {
             Response response = client.newCall(request).execute();
+            assert response.body() != null;
             return new JSONObject(response.body().string());
         } catch (IOException e) {
             return null;
         }
     }
 
-    private HashMap<String, String> compareEvent(String CalendarID, Event event) {
-        JSONObject response = getEvent(CalendarID, event);
+    private HashMap<String, String> compareEvent(String CalendarID, Item item) {
+        JSONObject response = getEvent(CalendarID, item);
         HashMap<String, String> differences = new HashMap<>();
-        LocalDateTime start = LocalDateTime.parse(response.getJSONObject("start").getString("dateTime"));
-        LocalDateTime end = LocalDateTime.parse(response.getJSONObject("end").getString("dateTime"));
-        if (!response.getString("summary").equals(event.getDescription().getName())) {
-            differences.put("summary", event.getDescription().getName());
+        if (item instanceof Tasks){
+            assert response != null;
+            LocalDate date = LocalDate.parse(response.getJSONObject("start").getString("date"));
+            if (date != LocalDate.parse(((Tasks) item).getDate())){
+                differences.put("date", ((Tasks) item).getDate());
+            }
         }
-        if (!response.getString("description").equals(event.getDescription().getDescription())) {
-            differences.put("description", event.getDescription().getDescription());
+        else{
+            assert response != null;
+            LocalDateTime start = LocalDateTime.parse(response.getJSONObject("start").getString("dateTime"));
+            LocalDateTime end = LocalDateTime.parse(response.getJSONObject("end").getString("dateTime"));
+            if (start != ((Event) item).getStartTime()) {
+                differences.put("start", ((Event) item).getStartTime().toString());
+            }
+            if (end != ((Event) item).getEndTime()) {
+                differences.put("end", ((Event) item).getEndTime().toString());
+            }
         }
-        if (start != event.getStartTime()) {
-            differences.put("start", event.getStartTime().toString());
+
+        if (!response.getString("summary").equals(item.getDescription().getName())) {
+            differences.put("summary", item.getDescription().getName());
         }
-        if (end != event.getEndTime()) {
-            differences.put("end", event.getEndTime().toString());
+        if (!response.getString("description").equals(item.getDescription().getDescription())) {
+            differences.put("description", item.getDescription().getDescription());
         }
         return differences;
     }
+
+    private Boolean isAllDay(JSONObject event){ return event.getJSONObject("start").has("date"); }
 }
 
