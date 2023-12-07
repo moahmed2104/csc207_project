@@ -1,5 +1,7 @@
 package use_case.CreateNewEvent;
 
+import data_access.TaskRepository;
+import data_access.TaskRepositoryAdapter;
 import entity.*;
 
 import java.util.NoSuchElementException;
@@ -9,6 +11,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
     final CreateEventOutputBoundary eventPresenter;
     final DescriptionFactory descriptionFactory;
     final EventFactory eventFactory;
+    TaskRepository taskRepository;
 
     public CreateEventInteractor(CreateEventDataAccessInterface eventDataAccessObject,
                                  CreateEventOutputBoundary eventPresenter,
@@ -18,6 +21,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
         this.eventPresenter = eventPresenter;
         this.descriptionFactory = descriptionFactory;
         this.eventFactory = eventFactory;
+        this.taskRepository = new TaskRepositoryAdapter();
     }
 
     @Override
@@ -41,6 +45,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
             );
             parent.addSubItem(event);
             eventDataAccessObject.save(event);
+            taskRepository.appendTaskToCSV("source/Tasks.csv", createEventInputData.getName(), createEventInputData.getStart().toString(), createEventInputData.getDescription());
         } catch (NoSuchElementException e){
             // todo handle this
         }
