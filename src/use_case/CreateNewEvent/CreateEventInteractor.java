@@ -45,7 +45,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary{
             );
             parent.addSubItem(event);
             eventDataAccessObject.save(event);
-            taskRepository.appendTaskToCSV("source/Tasks.csv", createEventInputData.getName(), createEventInputData.getStart().toString(), createEventInputData.getDescription());
+            taskRepository.appendTaskToCSV("src/Tasks.csv", createEventInputData.getName(), createEventInputData.getStart().toString(), createEventInputData.getDescription());
         } catch (NoSuchElementException e){
             // todo handle this
         }
