@@ -18,7 +18,7 @@ import static java.lang.Boolean.TRUE;
 
 public class GoogleCalendar implements Calendar {
     private static final String API_URL = "https://www.googleapis.com/calendar/v3";
-    private static final String OAUTH_ID = "ya29.a0AfB_byDQQ5WZM9CLwJXNmFWhS7_rgqeg6fDhFCmXenso48T2YofIqns6jv2TyQLmYdwjDprdoAUgGvvQ7Kww6Wu_sitzME9_zFbcUxON_YLPHmsd-93K3_OHT6empC7kaUOAyqLSofp_cnWjIZjPGVZsGP5f3ueaZtXLaCgYKAUYSARASFQHGX2Miy0ZGBl-5dDJlHZE-gbIrEQ0171";
+    private static final String OAUTH_ID = System.getenv("OAUTH_ID");
 
     @Override
     public String getCalendarID() {
